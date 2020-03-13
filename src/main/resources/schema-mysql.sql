@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS current_power (id INTEGER AUTO_INCREMENT, timestamp DATETIME, generation NUMERIC(6,2), consumption NUMERIC(6,2), primary key (id))
