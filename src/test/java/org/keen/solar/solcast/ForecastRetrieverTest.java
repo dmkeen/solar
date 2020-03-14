@@ -14,7 +14,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
- * Calls a mock service
+ * Calls a mock service (created by @RestClientTest).
  */
 @RestClientTest(components = ForecastRetriever.class)
 public class ForecastRetrieverTest {

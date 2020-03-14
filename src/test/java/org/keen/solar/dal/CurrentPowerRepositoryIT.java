@@ -8,6 +8,12 @@ import org.springframework.util.Assert;
 
 import java.time.OffsetDateTime;
 
+/**
+ * Tests the CurrentPowerRepository using an in-memory database (configured in /test/resources/application.properties).
+ *
+ * Setting spring.test.database.replace=none prevents @DataJdbcTest from configuring its own in-memory database
+ * (which wouldn't have its schema setup by /test/resources/schema-h2.sql).
+ */
 @DataJdbcTest(properties = "spring.test.database.replace=none")
 public class CurrentPowerRepositoryIT {
 

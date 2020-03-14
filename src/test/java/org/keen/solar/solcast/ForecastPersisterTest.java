@@ -23,8 +23,12 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 /**
  * Test using a mock service and an in-memory database
+ *
+ * The mock service (MockRestServiceServer) is created by @RestClientTest. @AutoConfigureDataJdbc is one of the
+ * annotations included in @DataJdbcTest (Spring Boot doesn't allow multiple test 'slice' annotations to be used
+ * together, i.e. @RestClientTest and @DataJdbcTest).
+ * The in-memory database is configured in /test/resources/application.properties.
  */
-@AutoConfigureCache
 @AutoConfigureDataJdbc
 @RestClientTest(components = ForecastRetriever.class)
 public class ForecastPersisterTest {

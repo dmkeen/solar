@@ -13,6 +13,9 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+/**
+ * Tests the deserialization of Solcast forecasts.
+ */
 @JsonTest
 public class ForecastsDeserializerTest {
 

@@ -16,6 +16,9 @@ import static org.mockito.Mockito.when;
 @Configuration
 public class TestConfiguration {
 
+    /**
+     * Creates a RestTemplateBuilder with a request/response logging interceptor.
+     */
     @Bean
     public RestTemplateBuilder restTemplateBuilder() {
         // Using a BufferingClientHttpRequestFactory so that the logging interceptor doesn't use up the stream.
