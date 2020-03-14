@@ -32,6 +32,7 @@ public class ForecastsDeserializerTest {
         List<GenerationForecast> forecastList = forecasts.getForecasts();
         Assert.notEmpty(forecastList, "Expected list of forecasts to be populated");
         Assert.noNullElements(forecastList, "Expected no null forecasts");
+        Assert.state(forecastList.size() == 336, "Expected 336 forecasts but found " + forecastList.size());
 
         GenerationForecast forecast = forecastList.get(0);
         String periodEndString = "2020-03-14T01:30:00.0000000Z";
