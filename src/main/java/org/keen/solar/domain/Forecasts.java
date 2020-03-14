@@ -1,10 +1,14 @@
 package org.keen.solar.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.keen.solar.solcast.ForecastsDeserializer;
+
 import java.util.List;
 
 /**
  * Wrapper for a list of Solcast solar panel output forecasts. Created to simplify JSON deserialization.
  */
+@JsonDeserialize(using = ForecastsDeserializer.class)
 public class Forecasts {
 
     private List<GenerationForecast> forecasts;

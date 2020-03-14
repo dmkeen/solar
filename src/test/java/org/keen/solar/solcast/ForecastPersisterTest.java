@@ -14,7 +14,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.util.Assert;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,14 +62,26 @@ public class ForecastPersisterTest {
 
         // Then
         Assert.state(repository.count() == 336, "Expected 336 forecast entries");
+        String periodEndString = "2020-03-14T01:30:00.0000000Z";
+        GenerationForecast forecast = repository.findByPeriodEnd(periodEndString);
+        Assert.notNull(forecast, "Expected to retrieve updated forecast");
+        Duration duration = Duration.parse("PT30M");
+        Assert.state(forecast.getPeriod().equals(duration), String.format("Expected duration of %s but was %s", duration, forecast.getPeriod()));
+        Assert.state(forecast.getPeriod_end().equals(periodEndString), String.format("Expected period end of %s but was %s", periodEndString, forecast.getPeriod_end()));
+        long periodEndEpoch = OffsetDateTime.parse(periodEndString).toEpochSecond();
+        Assert.state(forecast.getPeriod_end_epoch().equals(periodEndEpoch), String.format("Expected period end of %s but was %s", periodEndEpoch, forecast.getPeriod_end_epoch()));
+        Assert.state(forecast.getPv_estimate().equals(1.9614), String.format("Expected pv estimate of %s but was %s", 1.9614, forecast.getPv_estimate()));
+        Assert.state(forecast.getPv_estimate10().equals(1.3395), String.format("Expected pv estimate 10 of %s but was %s", 1.3395, forecast.getPv_estimate10()));
+        Assert.state(forecast.getPv_estimate90().equals(2.6258), String.format("Expected pv estimate 90 of %s but was %s", 2.6258, forecast.getPv_estimate90()));
     }
 
     @Test
     public void givenPopulatedRepository_whenRetrieveAndPersist_thenExistingEntriesUpdated() {
         // Given
-        LocalDateTime periodEnd = LocalDateTime.parse("2020-03-14T01:30:00");
+        String periodEndString = "2020-03-14T01:30:00.0000000Z";
+        long periodEndEpoch = OffsetDateTime.parse(periodEndString).toEpochSecond();
         List<GenerationForecast> forecasts = new ArrayList<>();
-        forecasts.add(new GenerationForecast(2D, 1D, 3D, periodEnd, Duration.parse("PT40M")));
+        forecasts.add(new GenerationForecast(2D, 1D, 3D, periodEndString, periodEndEpoch, Duration.parse("PT40M")));
         repository.deleteAll();
         repository.saveAll(forecasts);
 
@@ -83,11 +95,12 @@ public class ForecastPersisterTest {
         // Then
         long count = repository.count();
         Assert.state(count == 336, String.format("Expected 336 forecast entries but found %d", count));
-        GenerationForecast updatedForecast = repository.findByPeriodEnd(periodEnd);
+        GenerationForecast updatedForecast = repository.findByPeriodEnd(periodEndString);
         Assert.notNull(updatedForecast, "Expected to retrieve updated forecast");
         Duration duration = Duration.parse("PT30M");
         Assert.state(updatedForecast.getPeriod().equals(duration), String.format("Expected duration of %s but was %s", duration, updatedForecast.getPeriod()));
-        Assert.state(updatedForecast.getPeriod_end().equals(periodEnd), String.format("Expected period end of %s but was %s", periodEnd, updatedForecast.getPeriod_end()));
+        Assert.state(updatedForecast.getPeriod_end().equals(periodEndString), String.format("Expected period end of %s but was %s", periodEndString, updatedForecast.getPeriod_end()));
+        Assert.state(updatedForecast.getPeriod_end_epoch().equals(periodEndEpoch), String.format("Expected period end of %s but was %s", periodEndEpoch, updatedForecast.getPeriod_end_epoch()));
         Assert.state(updatedForecast.getPv_estimate().equals(1.9614), String.format("Expected pv estimate of %s but was %s", 1.9614, updatedForecast.getPv_estimate()));
         Assert.state(updatedForecast.getPv_estimate10().equals(1.3395), String.format("Expected pv estimate 10 of %s but was %s", 1.3395, updatedForecast.getPv_estimate10()));
         Assert.state(updatedForecast.getPv_estimate90().equals(2.6258), String.format("Expected pv estimate 90 of %s but was %s", 2.6258, updatedForecast.getPv_estimate90()));

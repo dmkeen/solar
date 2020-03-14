@@ -3,7 +3,6 @@ package org.keen.solar.domain;
 import org.springframework.data.annotation.Id;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 
 /**
  * Solcast solar panel output forecast.
@@ -28,9 +27,13 @@ public class GenerationForecast {
      */
     private Double pv_estimate90;
     /**
-     * End of the averaging period, in UTC.
+     * End of the averaging period, in ISO8601 format (UTC).
      */
-    private LocalDateTime period_end;
+    private String period_end;
+    /**
+     * End of the averaging period, in number of seconds since the epoch
+     */
+    private Long period_end_epoch;
     /**
      * Length of the averaging period
      */
@@ -39,11 +42,12 @@ public class GenerationForecast {
     public GenerationForecast() {
     }
 
-    public GenerationForecast(Double pv_estimate, Double pv_estimate10, Double pv_estimate90, LocalDateTime period_end, Duration period) {
+    public GenerationForecast(Double pv_estimate, Double pv_estimate10, Double pv_estimate90, String period_end, Long period_end_epoch, Duration period) {
         this.pv_estimate = pv_estimate;
         this.pv_estimate10 = pv_estimate10;
         this.pv_estimate90 = pv_estimate90;
         this.period_end = period_end;
+        this.period_end_epoch = period_end_epoch;
         this.period = period;
     }
 
@@ -63,8 +67,12 @@ public class GenerationForecast {
         return pv_estimate90;
     }
 
-    public LocalDateTime getPeriod_end() {
+    public String getPeriod_end() {
         return period_end;
+    }
+
+    public Long getPeriod_end_epoch() {
+        return period_end_epoch;
     }
 
     public Duration getPeriod() {

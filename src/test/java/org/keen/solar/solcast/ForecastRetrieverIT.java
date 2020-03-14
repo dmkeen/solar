@@ -30,6 +30,7 @@ public class ForecastRetrieverIT {
         Assert.notEmpty(forecasts, "Expected forecasts to be returned");
         Assert.notNull(forecasts.get(0).getPeriod(), "Expected period to be populated");
         Assert.notNull(forecasts.get(0).getPeriod_end(), "Expected period end to be populated");
+        Assert.notNull(forecasts.get(0).getPeriod_end_epoch(), "Expected period end epoch to be populated");
         Assert.notNull(forecasts.get(0).getPv_estimate(), "Expected pv estimate to be populated");
         Assert.notNull(forecasts.get(0).getPv_estimate10(), "Expected pv estimate 10 to be populated");
         Assert.notNull(forecasts.get(0).getPv_estimate90(), "Expected pv estimate 90 to be populated");
