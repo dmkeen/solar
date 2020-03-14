@@ -1,13 +1,20 @@
 package org.keen.solar.domain;
 
+import org.springframework.data.annotation.Id;
+
 import java.time.Duration;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 /**
  * Solcast solar panel output forecast.
  */
 public class GenerationForecast {
 
+    /**
+     * Id for this forecast. Used by the persistence layer.
+     */
+    @Id
+    private Long id;
     /**
      * Solar panel power estimate in kilowatts
      */
@@ -21,9 +28,9 @@ public class GenerationForecast {
      */
     private Double pv_estimate90;
     /**
-     * End of the averaging period
+     * End of the averaging period, in UTC.
      */
-    private ZonedDateTime period_end;
+    private LocalDateTime period_end;
     /**
      * Length of the averaging period
      */
@@ -32,12 +39,16 @@ public class GenerationForecast {
     public GenerationForecast() {
     }
 
-    public GenerationForecast(Double pv_estimate, Double pv_estimate10, Double pv_estimate90, ZonedDateTime period_end, Duration period) {
+    public GenerationForecast(Double pv_estimate, Double pv_estimate10, Double pv_estimate90, LocalDateTime period_end, Duration period) {
         this.pv_estimate = pv_estimate;
         this.pv_estimate10 = pv_estimate10;
         this.pv_estimate90 = pv_estimate90;
         this.period_end = period_end;
         this.period = period;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Double getPv_estimate() {
@@ -52,7 +63,7 @@ public class GenerationForecast {
         return pv_estimate90;
     }
 
-    public ZonedDateTime getPeriod_end() {
+    public LocalDateTime getPeriod_end() {
         return period_end;
     }
 

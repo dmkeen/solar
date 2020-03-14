@@ -17,7 +17,7 @@ import java.util.List;
  */
 @ContextConfiguration(classes = {TestConfiguration.class, ForecastRetriever.class})
 @ExtendWith(SpringExtension.class)
-@TestPropertySource(locations = "/test.properties")
+@TestPropertySource(locations = "/application.properties")
 public class ForecastRetrieverIT {
 
     @Autowired

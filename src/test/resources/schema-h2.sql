@@ -1,0 +1,4 @@
+CREATE SCHEMA IF NOT EXISTS solar
+SET SCHEMA solar
+CREATE TABLE IF NOT EXISTS current_power (id INTEGER IDENTITY PRIMARY KEY, timestamp TIMESTAMP WITH TIME ZONE, generation NUMERIC(6,2), consumption NUMERIC(6,2))
+CREATE TABLE IF NOT EXISTS generation_forecast (id INTEGER IDENTITY PRIMARY KEY, pv_estimate DOUBLE, pv_estimate10 DOUBLE, pv_estimate90 DOUBLE, period_end TIMESTAMP, period VARCHAR(50))

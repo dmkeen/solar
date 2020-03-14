@@ -15,7 +15,7 @@ import org.springframework.util.Assert;
  */
 @ContextConfiguration(classes = {TestConfiguration.class, CurrentPowerRetriever.class})
 @ExtendWith(SpringExtension.class)
-@TestPropertySource(locations = "/test.properties")
+@TestPropertySource(locations = "/application.properties")
 public class CurrentPowerRetrieverIT {
 
     @Autowired CurrentPowerRetriever retriever;

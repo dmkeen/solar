@@ -12,7 +12,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableJdbcRepositories
-public class CurrentPowerConfiguration extends AbstractJdbcConfiguration {
+public class DalConfiguration extends AbstractJdbcConfiguration {
 
     @Autowired
     private DataSource dataSource;
