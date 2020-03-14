@@ -37,6 +37,7 @@ public class ForecastRetrieverTest {
 
         // Then
         Assert.notEmpty(forecasts, "Expected forecasts to be returned");
+        Assert.state(forecasts.size() == 336, "Expected 336 forecasts but found " + forecasts.size());
         Assert.notNull(forecasts.get(0).getPeriod(), "Expected period to be populated");
         Assert.notNull(forecasts.get(0).getPeriod_end(), "Expected period end to be populated");
         Assert.notNull(forecasts.get(0).getPeriod_end_epoch(), "Expected period end epoch to be populated");
