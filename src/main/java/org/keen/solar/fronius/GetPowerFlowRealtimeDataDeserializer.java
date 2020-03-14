@@ -25,6 +25,8 @@ public class GetPowerFlowRealtimeDataDeserializer extends StdDeserializer<Curren
 
     @Override
     public CurrentPower deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+        String applicationTimestamp = OffsetDateTime.now().toString();
+
         JsonNode jsonNode = p.getCodec().readTree(p);
 
         String timestampString = jsonNode.get("Head").get("Timestamp").textValue();
@@ -34,6 +36,6 @@ public class GetPowerFlowRealtimeDataDeserializer extends StdDeserializer<Curren
         double powerGeneration = siteNode.get("P_PV").asDouble();
         double powerConsumption = siteNode.get("P_Load").asDouble();
 
-        return new CurrentPower(timestamp.toLocalDateTime(), powerGeneration, powerConsumption);
+        return new CurrentPower(timestampString, timestamp.toEpochSecond(), applicationTimestamp, powerGeneration, powerConsumption);
     }
 }

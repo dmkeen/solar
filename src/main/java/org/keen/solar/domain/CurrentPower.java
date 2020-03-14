@@ -15,9 +15,17 @@ public class CurrentPower {
     @Id
     private Long id;
     /**
-     * Timestamp of the measurement
+     * Measurement time according to the inverter, in ISO8601 format including offset
      */
-    private LocalDateTime timestamp;
+    private String inverterTimestamp;
+    /**
+     * Measurement time according to the inverter, in number of seconds since the epoch
+     */
+    private Long inverterEpochTimestamp;
+    /**
+     * Time that the measurement was received by this application, in ISO8601 format including offset
+     */
+    private String applicationTimestamp;
     /**
      * Power generation in Watts
      */
@@ -27,8 +35,10 @@ public class CurrentPower {
      */
     private double consumption;
 
-    public CurrentPower(LocalDateTime timestamp, double generation, double consumption) {
-        this.timestamp = timestamp;
+    public CurrentPower(String inverterTimestamp, Long inverterEpochTimestamp, String applicationTimestamp, double generation, double consumption) {
+        this.inverterTimestamp = inverterTimestamp;
+        this.inverterEpochTimestamp = inverterEpochTimestamp;
+        this.applicationTimestamp = applicationTimestamp;
         this.generation = generation;
         this.consumption = consumption;
     }
@@ -37,8 +47,16 @@ public class CurrentPower {
         return id;
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public String getInverterTimestamp() {
+        return inverterTimestamp;
+    }
+
+    public Long getInverterEpochTimestamp() {
+        return inverterEpochTimestamp;
+    }
+
+    public String getApplicationTimestamp() {
+        return applicationTimestamp;
     }
 
     public double getGeneration() {

@@ -24,7 +24,9 @@ public class CurrentPowerRetrieverIT {
     public void givenInverterIsOnline_whenRetrieve_thenCurrentPowerReturned() {
         CurrentPower currentPower = retriever.retrieve();
 
-        Assert.notNull(currentPower.getTimestamp(), "Expected timestamp to be populated");
+        Assert.notNull(currentPower.getInverterTimestamp(), "Expected inverter timestamp to be populated");
+        Assert.notNull(currentPower.getInverterEpochTimestamp(), "Expected inverter epoch timestamp to be populated");
+        Assert.notNull(currentPower.getApplicationTimestamp(), "Expected application timestamp to be populated");
         Assert.state(Math.abs(0 - currentPower.getConsumption()) > 1, "Expected consumption to be greater than 1");
     }
 }
