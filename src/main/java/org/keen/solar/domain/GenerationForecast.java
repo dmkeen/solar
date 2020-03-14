@@ -70,4 +70,8 @@ public class GenerationForecast {
     public Duration getPeriod() {
         return period;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
