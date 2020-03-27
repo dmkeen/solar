@@ -1,7 +1,7 @@
 package org.keen.solar.config;
 
-import org.keen.solar.fronius.CurrentPowerPersister;
-import org.keen.solar.solcast.ForecastPersister;
+import org.keen.solar.sources.fronius.CurrentPowerPersister;
+import org.keen.solar.sources.solcast.ForecastPersister;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;

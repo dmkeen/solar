@@ -1,4 +1,4 @@
-package org.keen.solar.solcast;
+package org.keen.solar.sources.solcast;
 
 import org.junit.jupiter.api.Test;
 import org.keen.solar.domain.Forecasts;

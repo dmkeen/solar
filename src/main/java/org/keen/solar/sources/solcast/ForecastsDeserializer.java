@@ -1,4 +1,4 @@
-package org.keen.solar.solcast;
+package org.keen.solar.sources.solcast;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;

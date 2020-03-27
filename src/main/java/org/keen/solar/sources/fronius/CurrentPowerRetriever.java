@@ -1,4 +1,4 @@
-package org.keen.solar.fronius;
+package org.keen.solar.sources.fronius;
 
 import org.keen.solar.domain.CurrentPower;
 import org.springframework.beans.factory.annotation.Value;

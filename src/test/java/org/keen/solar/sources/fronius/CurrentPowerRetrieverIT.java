@@ -1,4 +1,4 @@
-package org.keen.solar.fronius;
+package org.keen.solar.sources.fronius;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

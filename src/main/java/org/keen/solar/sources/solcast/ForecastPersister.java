@@ -1,4 +1,4 @@
-package org.keen.solar.solcast;
+package org.keen.solar.sources.solcast;
 
 import org.keen.solar.dal.ForecastRepository;
 import org.keen.solar.domain.GenerationForecast;

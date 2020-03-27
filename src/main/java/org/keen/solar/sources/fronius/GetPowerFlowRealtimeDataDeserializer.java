@@ -1,4 +1,4 @@
-package org.keen.solar.fronius;
+package org.keen.solar.sources.fronius;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;

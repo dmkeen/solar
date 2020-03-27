@@ -1,10 +1,8 @@
 package org.keen.solar.domain;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.keen.solar.fronius.GetPowerFlowRealtimeDataDeserializer;
+import org.keen.solar.sources.fronius.GetPowerFlowRealtimeDataDeserializer;
 import org.springframework.data.annotation.Id;
-
-import java.time.LocalDateTime;
 
 /**
  * Represents the power generation and usage at a point in time
