@@ -1,9 +1,9 @@
-package org.keen.solar.sources.fronius;
+package org.keen.solar.power.fronius;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keen.solar.TestConfiguration;
-import org.keen.solar.domain.CurrentPower;
+import org.keen.solar.power.domain.CurrentPower;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;

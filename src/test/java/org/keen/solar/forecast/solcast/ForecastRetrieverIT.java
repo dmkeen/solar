@@ -1,9 +1,9 @@
-package org.keen.solar.sources.solcast;
+package org.keen.solar.forecast.solcast;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keen.solar.TestConfiguration;
-import org.keen.solar.domain.GenerationForecast;
+import org.keen.solar.forecast.domain.GenerationForecast;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;

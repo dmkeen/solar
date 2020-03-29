@@ -1,4 +1,4 @@
-package org.keen.solar.domain;
+package org.keen.solar.forecast.domain;
 
 import org.springframework.data.annotation.Id;
 

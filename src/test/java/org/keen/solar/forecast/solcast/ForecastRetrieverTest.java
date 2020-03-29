@@ -1,7 +1,7 @@
-package org.keen.solar.sources.solcast;
+package org.keen.solar.forecast.solcast;
 
 import org.junit.jupiter.api.Test;
-import org.keen.solar.domain.GenerationForecast;
+import org.keen.solar.forecast.domain.GenerationForecast;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.http.MediaType;

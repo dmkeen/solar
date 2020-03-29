@@ -1,7 +1,7 @@
-package org.keen.solar.domain;
+package org.keen.solar.power.domain;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.keen.solar.sources.fronius.GetPowerFlowRealtimeDataDeserializer;
+import org.keen.solar.power.fronius.GetPowerFlowRealtimeDataDeserializer;
 import org.springframework.data.annotation.Id;
 
 /**

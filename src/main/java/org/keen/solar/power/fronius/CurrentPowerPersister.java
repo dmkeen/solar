@@ -1,6 +1,6 @@
-package org.keen.solar.sources.fronius;
+package org.keen.solar.power.fronius;
 
-import org.keen.solar.dal.CurrentPowerRepository;
+import org.keen.solar.power.dal.CurrentPowerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;

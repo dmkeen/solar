@@ -1,6 +1,6 @@
-package org.keen.solar.sources.fronius;
+package org.keen.solar.power.fronius;
 
-import org.keen.solar.domain.CurrentPower;
+import org.keen.solar.power.domain.CurrentPower;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;

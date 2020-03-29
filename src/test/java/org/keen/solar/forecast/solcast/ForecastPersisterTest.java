@@ -1,8 +1,8 @@
-package org.keen.solar.sources.solcast;
+package org.keen.solar.forecast.solcast;
 
 import org.junit.jupiter.api.Test;
-import org.keen.solar.dal.ForecastRepository;
-import org.keen.solar.domain.GenerationForecast;
+import org.keen.solar.forecast.dal.ForecastRepository;
+import org.keen.solar.forecast.domain.GenerationForecast;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.AutoConfigureDataJdbc;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;

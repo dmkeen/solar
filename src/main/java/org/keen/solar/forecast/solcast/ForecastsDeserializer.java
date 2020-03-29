@@ -1,12 +1,12 @@
-package org.keen.solar.sources.solcast;
+package org.keen.solar.forecast.solcast;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import org.keen.solar.domain.Forecasts;
-import org.keen.solar.domain.GenerationForecast;
+import org.keen.solar.forecast.domain.Forecasts;
+import org.keen.solar.forecast.domain.GenerationForecast;
 
 import java.io.IOException;
 import java.time.Duration;

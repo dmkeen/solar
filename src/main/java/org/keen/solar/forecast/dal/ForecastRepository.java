@@ -1,6 +1,6 @@
-package org.keen.solar.dal;
+package org.keen.solar.forecast.dal;
 
-import org.keen.solar.domain.GenerationForecast;
+import org.keen.solar.forecast.domain.GenerationForecast;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 

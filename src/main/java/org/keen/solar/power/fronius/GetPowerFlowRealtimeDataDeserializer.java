@@ -1,11 +1,11 @@
-package org.keen.solar.sources.fronius;
+package org.keen.solar.power.fronius;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import org.keen.solar.domain.CurrentPower;
+import org.keen.solar.power.domain.CurrentPower;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;

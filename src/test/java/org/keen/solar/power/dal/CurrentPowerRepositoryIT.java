@@ -1,7 +1,8 @@
-package org.keen.solar.dal;
+package org.keen.solar.power.dal;
 
 import org.junit.jupiter.api.Test;
-import org.keen.solar.domain.CurrentPower;
+import org.keen.solar.power.dal.CurrentPowerRepository;
+import org.keen.solar.power.domain.CurrentPower;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.util.Assert;

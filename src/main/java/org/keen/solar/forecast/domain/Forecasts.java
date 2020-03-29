@@ -1,7 +1,7 @@
-package org.keen.solar.domain;
+package org.keen.solar.forecast.domain;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.keen.solar.sources.solcast.ForecastsDeserializer;
+import org.keen.solar.forecast.solcast.ForecastsDeserializer;
 
 import java.util.List;
 
