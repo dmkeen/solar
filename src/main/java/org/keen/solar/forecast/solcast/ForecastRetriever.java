@@ -13,6 +13,11 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Retrieves the solar panel forecast from Solcast.
+ *
+ * See <a href="https://docs.solcast.com.au/#forecasts-rooftop-site">Solcast API</a>
+ */
 @Service
 public class ForecastRetriever {
 
