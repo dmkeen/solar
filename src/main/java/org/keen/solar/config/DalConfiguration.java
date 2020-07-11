@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import javax.sql.DataSource;
 
 @Configuration
-@EnableJdbcRepositories
+@EnableJdbcRepositories({"org.keen.solar.forecast.dal","org.keen.solar.power.dal"})
 public class DalConfiguration extends AbstractJdbcConfiguration {
 
     @Autowired

@@ -15,30 +15,36 @@ public class CurrentPower {
     /**
      * Measurement time according to the inverter, in ISO8601 format including offset
      */
-    private String inverterTimestamp;
+    private final String inverterTimestamp;
     /**
      * Measurement time according to the inverter, in number of seconds since the epoch
      */
-    private Long inverterEpochTimestamp;
+    private final Long inverterEpochTimestamp;
     /**
      * Time that the measurement was received by this application, in ISO8601 format including offset
      */
-    private String applicationTimestamp;
+    private final String applicationTimestamp;
     /**
      * Power generation in Watts
      */
-    private double generation;
+    private final double generation;
     /**
      * Power consumption in Watts
      */
-    private double consumption;
+    private final double consumption;
+    /**
+     * Flag indicating whether this power generation measurement has been uploaded to Solcast
+     */
+    private boolean uploaded;
 
-    public CurrentPower(String inverterTimestamp, Long inverterEpochTimestamp, String applicationTimestamp, double generation, double consumption) {
+    public CurrentPower(String inverterTimestamp, Long inverterEpochTimestamp, String applicationTimestamp,
+                        double generation, double consumption, boolean uploaded) {
         this.inverterTimestamp = inverterTimestamp;
         this.inverterEpochTimestamp = inverterEpochTimestamp;
         this.applicationTimestamp = applicationTimestamp;
         this.generation = generation;
         this.consumption = consumption;
+        this.uploaded = uploaded;
     }
 
     public Long getId() {
@@ -63,5 +69,26 @@ public class CurrentPower {
 
     public double getConsumption() {
         return consumption;
+    }
+
+    public boolean isUploaded() {
+        return uploaded;
+    }
+
+    public void setUploaded(boolean uploaded) {
+        this.uploaded = uploaded;
+    }
+
+    @Override
+    public String toString() {
+        return "CurrentPower{" +
+                "id=" + id +
+                ", inverterTimestamp='" + inverterTimestamp + '\'' +
+                ", inverterEpochTimestamp=" + inverterEpochTimestamp +
+                ", applicationTimestamp='" + applicationTimestamp + '\'' +
+                ", generation=" + generation +
+                ", consumption=" + consumption +
+                ", uploaded=" + uploaded +
+                '}';
     }
 }

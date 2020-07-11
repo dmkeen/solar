@@ -36,6 +36,6 @@ public class GetPowerFlowRealtimeDataDeserializer extends StdDeserializer<Curren
         double powerGeneration = siteNode.get("P_PV").asDouble();
         double powerConsumption = siteNode.get("P_Load").asDouble();
 
-        return new CurrentPower(timestampString, timestamp.toEpochSecond(), applicationTimestamp, powerGeneration, powerConsumption);
+        return new CurrentPower(timestampString, timestamp.toEpochSecond(), applicationTimestamp, powerGeneration, powerConsumption, false);
     }
 }
