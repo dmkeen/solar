@@ -8,9 +8,16 @@ import org.keen.solar.power.domain.Measurements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.event.EventListener;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.*;
@@ -23,6 +30,7 @@ import java.util.stream.Collectors;
  * See <a href="https://docs.solcast.com.au/#measurements-rooftop-site">Solcast API</a>
  */
 @Service
+@RestController
 public class MeasurementUploader {
 
     private final Logger logger = LoggerFactory.getLogger(MeasurementUploader.class);
@@ -45,14 +53,38 @@ public class MeasurementUploader {
     }
 
     /**
+     * Uploads all measurements not yet uploaded to Solcast within the specified date range
+     *
+     * @param start start date (inclusive)
+     * @param end   end date (exclusive)
+     */
+    @PostMapping("/upload")
+    public void uploadByDateRange(@RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+                                  @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+        long startTimestamp = start.atStartOfDay(ZoneId.of("Z")).toEpochSecond();
+        long endTimestamp = end.atStartOfDay(ZoneId.of("Z")).toEpochSecond();
+        logger.info(String.format("Retrieving power generation not yet uploaded between %s (%d) and %s (%d)",
+                start.toString(), startTimestamp, end.toString(), endTimestamp));
+        List<CurrentPower> currentPowerNotUploaded = repository.findByUploadedAndInverterEpochTimestampBetween(false, startTimestamp, endTimestamp);
+        doUpload(currentPowerNotUploaded);
+    }
+
+    /**
      * Uploads all measurements not yet uploaded to Solcast
      */
-    public void upload() {
+    @EventListener(classes = ApplicationReadyEvent.class)
+    @Scheduled(cron = "${app.solcast.measurement-upload-cron}")
+    public void uploadAll() {
         List<CurrentPower> currentPowerNotUploaded = repository.findByUploaded(false);
+        doUpload(currentPowerNotUploaded);
+    }
+
+    private void doUpload(List<CurrentPower> currentPowerNotUploaded) {
         if (currentPowerNotUploaded.isEmpty()) {
             logger.info("Nothing to upload");
             return;
         }
+        logger.debug(String.format("Converting list of %d CurrentPower to Measurement", currentPowerNotUploaded.size()));
         List<Measurement> measurementsToUpload = convertToMeasurements(currentPowerNotUploaded);
 
         HttpHeaders headers = new HttpHeaders();
@@ -70,8 +102,10 @@ public class MeasurementUploader {
                 HttpMethod.POST, httpEntity, MeasurementResponse.class);
 
         if (handleErrors(measurementResponse)) return;
+        logger.debug("Uploaded successfully");
 
         updateRepository(currentPowerNotUploaded, measurementsToUpload, measurementResponse.getBody().getMeasurements());
+        logger.debug("Repository updated");
     }
 
     /**
@@ -86,13 +120,18 @@ public class MeasurementUploader {
         if (returnedMeasurements.size() == measurementsToUpload.size()) {
             // Update repository to say that we've successfully uploaded the measurements
             currentPowerNotUploaded.parallelStream().forEach(currentPower -> currentPower.setUploaded(true));
+            logger.debug("Updating repository");
             repository.saveAll(currentPowerNotUploaded);
             return;
         }
         // Only update repository for successfully uploaded measurements
         List<Measurement> measurementsUploaded = new ArrayList<>(measurementsToUpload);
         measurementsUploaded.retainAll(returnedMeasurements);
-        measurementsUploaded.forEach(measurement -> repository.saveAll(measurement.getSource()));
+        logger.debug("Updating repository");
+        measurementsUploaded.forEach(measurement -> {
+            measurement.getSource().parallelStream().forEach(currentPower -> currentPower.setUploaded(true));
+            repository.saveAll(measurement.getSource());
+        });
         // Log which measurements were in error
         measurementsToUpload.removeAll(returnedMeasurements);
         logger.warn("The following measurements were not uploaded successfully: " + measurementsToUpload.toString());

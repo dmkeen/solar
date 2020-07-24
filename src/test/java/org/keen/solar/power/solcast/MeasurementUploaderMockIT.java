@@ -64,7 +64,7 @@ public class MeasurementUploaderMockIT {
     private String solcastSiteId;
 
     @Test
-    public void givenSingleCurrentPower_whenUpload_thenMeasurementUploadedAndSavedToRepository() {
+    public void givenSingleCurrentPower_whenUploadAll_thenMeasurementUploadedAndSavedToRepository() {
         // Given
         List<CurrentPower> currentPowerList = new ArrayList<>();
         double generationWatts = 1245D;
@@ -93,7 +93,7 @@ public class MeasurementUploaderMockIT {
                         + expectedPeriodEnd + "\",\"period\":\"PT5M\",\"total_power\":" + generationWatts / 1000 + "}]}", MediaType.APPLICATION_JSON));
 
         // When
-        measurementUploader.upload();
+        measurementUploader.uploadAll();
 
         // Then
         restServiceServer.verify();
@@ -108,7 +108,7 @@ public class MeasurementUploaderMockIT {
     }
 
     @Test
-    public void givenMultipleCurrentPower5MinsApart_whenUpload_thenMeasurementsUploadedAndSavedToRepository() {
+    public void givenMultipleCurrentPower5MinsApart_whenUploadAll_thenMeasurementsUploadedAndSavedToRepository() {
         // Given
         List<CurrentPower> currentPowerList = new ArrayList<>();
         double generationWatts = 1245D;
@@ -147,7 +147,7 @@ public class MeasurementUploaderMockIT {
                                 + generationWatts / 1000 + "}]}", MediaType.APPLICATION_JSON));
 
         // When
-        measurementUploader.upload();
+        measurementUploader.uploadAll();
 
         // Then
         restServiceServer.verify();
