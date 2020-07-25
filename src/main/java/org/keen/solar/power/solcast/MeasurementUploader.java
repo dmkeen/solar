@@ -61,8 +61,8 @@ public class MeasurementUploader {
     @PostMapping("/upload")
     public void uploadByDateRange(@RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
                                   @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
-        long startTimestamp = start.atStartOfDay(ZoneId.of("Z")).toEpochSecond();
-        long endTimestamp = end.atStartOfDay(ZoneId.of("Z")).toEpochSecond();
+        long startTimestamp = start.atStartOfDay(ZoneOffset.UTC).toEpochSecond();
+        long endTimestamp = end.atStartOfDay(ZoneOffset.UTC).toEpochSecond();
         logger.info(String.format("Retrieving power generation not yet uploaded between %s (%d) and %s (%d)",
                 start.toString(), startTimestamp, end.toString(), endTimestamp));
         List<CurrentPower> currentPowerNotUploaded = repository.findByUploadedAndInverterEpochTimestampBetween(false, startTimestamp, endTimestamp);
@@ -75,6 +75,7 @@ public class MeasurementUploader {
     @EventListener(classes = ApplicationReadyEvent.class)
     @Scheduled(cron = "${app.solcast.measurement-upload-cron}")
     public void uploadAll() {
+        // TODO: Don't upload if we've uploaded recently (configurable)
         List<CurrentPower> currentPowerNotUploaded = repository.findByUploaded(false);
         doUpload(currentPowerNotUploaded);
     }
@@ -86,6 +87,10 @@ public class MeasurementUploader {
         }
         logger.debug(String.format("Converting list of %d CurrentPower to Measurement", currentPowerNotUploaded.size()));
         List<Measurement> measurementsToUpload = convertToMeasurements(currentPowerNotUploaded);
+        // Remove any measurements with a period end in the future
+        measurementsToUpload = measurementsToUpload.stream()
+                .filter(measurement -> measurement.getPeriod_end().isBefore(OffsetDateTime.now(ZoneOffset.UTC)))
+                .collect(Collectors.toList());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(solcastApiKey);
@@ -104,26 +109,17 @@ public class MeasurementUploader {
         if (handleErrors(measurementResponse)) return;
         logger.debug("Uploaded successfully");
 
-        updateRepository(currentPowerNotUploaded, measurementsToUpload, measurementResponse.getBody().getMeasurements());
+        updateRepository(measurementsToUpload, measurementResponse.getBody().getMeasurements());
         logger.debug("Repository updated");
     }
 
     /**
      * Updates the repository for successfully uploaded CurrentPowers.
      *
-     * @param currentPowerNotUploaded list of CurrentPower submitted for upload
      * @param measurementsToUpload    list of Measurements submitted for upload
      * @param returnedMeasurements    list of Measurements successfully uploaded
      */
-    private void updateRepository(List<CurrentPower> currentPowerNotUploaded, List<Measurement> measurementsToUpload,
-                                  List<Measurement> returnedMeasurements) {
-        if (returnedMeasurements.size() == measurementsToUpload.size()) {
-            // Update repository to say that we've successfully uploaded the measurements
-            currentPowerNotUploaded.parallelStream().forEach(currentPower -> currentPower.setUploaded(true));
-            logger.debug("Updating repository");
-            repository.saveAll(currentPowerNotUploaded);
-            return;
-        }
+    private void updateRepository(List<Measurement> measurementsToUpload, List<Measurement> returnedMeasurements) {
         // Only update repository for successfully uploaded measurements
         List<Measurement> measurementsUploaded = new ArrayList<>(measurementsToUpload);
         measurementsUploaded.retainAll(returnedMeasurements);
@@ -134,7 +130,9 @@ public class MeasurementUploader {
         });
         // Log which measurements were in error
         measurementsToUpload.removeAll(returnedMeasurements);
-        logger.warn("The following measurements were not uploaded successfully: " + measurementsToUpload.toString());
+        if (!measurementsToUpload.isEmpty()) {
+            logger.warn("The following measurements were not uploaded successfully: " + measurementsToUpload.toString());
+        }
     }
 
     /**
