@@ -109,7 +109,8 @@ public class MeasurementUploader {
         if (handleErrors(measurementResponse)) return;
         logger.debug("Uploaded successfully");
 
-        updateRepository(measurementsToUpload, measurementResponse.getBody().getMeasurements());
+        MeasurementResponse responseBody = measurementResponse.getBody();
+        updateRepository(measurementsToUpload, responseBody == null ? new ArrayList<>() : responseBody.getMeasurements());
         logger.debug("Repository updated");
     }
 
@@ -122,6 +123,10 @@ public class MeasurementUploader {
     private void updateRepository(List<Measurement> measurementsToUpload, List<Measurement> returnedMeasurements) {
         // Only update repository for successfully uploaded measurements
         List<Measurement> measurementsUploaded = new ArrayList<>(measurementsToUpload);
+        // Handle the case where no measurements are returned
+        if (returnedMeasurements == null) {
+            returnedMeasurements = new ArrayList<>();
+        }
         measurementsUploaded.retainAll(returnedMeasurements);
         logger.debug("Updating repository");
         measurementsUploaded.forEach(measurement -> {
