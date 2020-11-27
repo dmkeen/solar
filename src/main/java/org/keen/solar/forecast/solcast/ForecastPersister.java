@@ -4,12 +4,15 @@ import org.keen.solar.forecast.dal.ForecastRepository;
 import org.keen.solar.forecast.domain.GenerationForecast;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 /**
  * Retrieves the solar panel output forecasts and persists them
  */
+@RestController
 public class ForecastPersister {
 
     @Autowired
@@ -18,6 +21,7 @@ public class ForecastPersister {
     @Autowired
     private ForecastRepository repository;
 
+    @PostMapping("/forecast/retrieve")
     @Scheduled(cron = "${app.solcast.forecast-retrieval-cron}")
     public void retrieveAndPersist() {
         List<GenerationForecast> forecasts = retriever.retrieve();

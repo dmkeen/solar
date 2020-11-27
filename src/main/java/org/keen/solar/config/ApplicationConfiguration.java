@@ -1,7 +1,6 @@
 package org.keen.solar.config;
 
 import org.keen.solar.power.fronius.CurrentPowerPersister;
-import org.keen.solar.forecast.solcast.ForecastPersister;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -17,8 +16,4 @@ public class ApplicationConfiguration {
         return new CurrentPowerPersister();
     }
 
-    @Bean
-    public ForecastPersister forecastPersister() {
-        return new ForecastPersister();
-    }
 }
