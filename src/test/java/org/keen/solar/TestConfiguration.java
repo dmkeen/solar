@@ -1,11 +1,15 @@
 package org.keen.solar;
 
+import org.keen.solar.config.MessagingConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
@@ -14,7 +18,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @Configuration
+@Import(MessagingConfiguration.class)
 public class TestConfiguration {
+
+    @Autowired
+    private HttpMessageConverter<Object> converter;
 
     /**
      * Creates a RestTemplateBuilder with a request/response logging interceptor.
@@ -26,6 +34,8 @@ public class TestConfiguration {
         ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory());
         RestTemplate restTemplate = new RestTemplate(factory);
         restTemplate.setInterceptors(Collections.singletonList(new RequestResponseLoggingInterceptor()));
+
+        restTemplate.getMessageConverters().add(converter);
 
         RestTemplateBuilder restTemplateBuilder = mock(RestTemplateBuilder.class);
         when(restTemplateBuilder.build()).thenReturn(restTemplate);
