@@ -1,5 +1,6 @@
 package org.keen.solar;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.keen.solar.config.MessagingConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -23,6 +24,11 @@ public class TestConfiguration {
 
     @Autowired
     private HttpMessageConverter<Object> converter;
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
 
     /**
      * Creates a RestTemplateBuilder with a request/response logging interceptor.
