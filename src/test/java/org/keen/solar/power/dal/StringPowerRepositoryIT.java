@@ -24,7 +24,8 @@ public class StringPowerRepositoryIT {
     @Test
     public void givenStringPower_whenSave_thenSavedToRepository() {
         // Given
-        StringPower stringPower = new StringPower(OffsetDateTime.now(), Duration.ofMinutes(5), 100D, 2D, 200D, 1.5D);
+        OffsetDateTime now = OffsetDateTime.now();
+        StringPower stringPower = new StringPower(now, now.toEpochSecond(), Duration.ofMinutes(5), 100D, 2D, 200D, 1.5D);
 
         // When
         StringPower savedStringPower = repository.save(stringPower);

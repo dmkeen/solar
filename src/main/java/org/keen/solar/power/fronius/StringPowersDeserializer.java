@@ -52,7 +52,8 @@ public class StringPowersDeserializer extends StdDeserializer<StringPowers> {
             Map.Entry<String, JsonNode> current2 = currentString2.next();
             Map.Entry<String, JsonNode> voltage1 = voltageString1.next();
             Map.Entry<String, JsonNode> voltage2 = voltageString2.next();
-            stringPowers.add(new StringPower(startDateTime.plusSeconds(Long.parseLong(current1.getKey())),
+            OffsetDateTime periodEnd = startDateTime.plusSeconds(Long.parseLong(current1.getKey()));
+            stringPowers.add(new StringPower(periodEnd, periodEnd.toEpochSecond(),
                     Duration.of(5, ChronoUnit.MINUTES),
                     voltage1.getValue().asDouble(), current1.getValue().asDouble(),
                     voltage2.getValue().asDouble(), current2.getValue().asDouble()));

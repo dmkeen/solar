@@ -61,6 +61,10 @@ public class StringPower {
      */
     private OffsetDateTime periodEnd;
     /**
+     * End of the averaging period, in number of seconds since the epoch
+     */
+    private Long periodEndEpoch;
+    /**
      * Length of the averaging period
      */
     private Duration period;
@@ -78,9 +82,10 @@ public class StringPower {
     private StringPower() {
     }
 
-    public StringPower(OffsetDateTime periodEnd, Duration period, double string1Volts, double string1Amps,
-                       double string2Volts, double string2Amps) {
+    public StringPower(OffsetDateTime periodEnd, Long periodEndEpoch, Duration period, double string1Volts,
+                       double string1Amps, double string2Volts, double string2Amps) {
         this.periodEnd = periodEnd;
+        this.periodEndEpoch = periodEndEpoch;
         this.period = period;
         this.string1Data = new StringData(string1Volts, string1Amps);
         this.string2Data = new StringData(string2Volts, string2Amps);
@@ -92,6 +97,10 @@ public class StringPower {
 
     public OffsetDateTime getPeriodEnd() {
         return periodEnd;
+    }
+
+    public Long getPeriodEndEpoch() {
+        return periodEndEpoch;
     }
 
     public Duration getPeriod() {
