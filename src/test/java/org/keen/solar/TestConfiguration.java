@@ -1,6 +1,5 @@
 package org.keen.solar;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.keen.solar.config.MessagingConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -19,16 +18,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @Configuration
-@Import(MessagingConfiguration.class)
+@Import({ObjectMapperConfiguration.class,MessagingConfiguration.class})
 public class TestConfiguration {
 
     @Autowired
     private HttpMessageConverter<Object> converter;
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
 
     /**
      * Creates a RestTemplateBuilder with a request/response logging interceptor.
