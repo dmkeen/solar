@@ -10,6 +10,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.Assert;
 
+import java.time.OffsetDateTime;
+
 /**
  * Calls the actual Fronius inverter API
  */
@@ -24,9 +26,10 @@ public class CurrentPowerRetrieverIT {
     public void givenInverterIsOnline_whenRetrieve_thenCurrentPowerReturned() {
         CurrentPower currentPower = retriever.retrieve();
 
-        Assert.notNull(currentPower.getInverterTimestamp(), "Expected inverter timestamp to be populated");
-        Assert.notNull(currentPower.getInverterEpochTimestamp(), "Expected inverter epoch timestamp to be populated");
-        Assert.notNull(currentPower.getApplicationTimestamp(), "Expected application timestamp to be populated");
+        Assert.state(currentPower.getInverterEpochTimestamp() > 0, "Expected inverter epoch timestamp to be populated");
+        int zoneOffsetSeconds = OffsetDateTime.now().getOffset().getTotalSeconds();
+        Assert.state(currentPower.getInverterZoneOffsetSeconds() == zoneOffsetSeconds,
+                String.format("Expected zone offset seconds to be %d but was %d", zoneOffsetSeconds, currentPower.getInverterZoneOffsetSeconds()));
         Assert.state(Math.abs(0 - currentPower.getConsumption()) > 1, "Expected consumption to be greater than 1");
     }
 }

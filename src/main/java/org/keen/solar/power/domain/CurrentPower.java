@@ -13,17 +13,19 @@ public class CurrentPower {
     @Id
     private Long id;
     /**
-     * Measurement time according to the inverter, in ISO8601 format including offset
-     */
-    private final String inverterTimestamp;
-    /**
      * Measurement time according to the inverter, in number of seconds since the epoch
      */
-    private final Long inverterEpochTimestamp;
+    private final long inverterEpochTimestamp;
     /**
-     * Time that the measurement was received by this application, in ISO8601 format including offset
+     * Number of seconds of the zone offset of the inverter time
      */
-    private final String applicationTimestamp;
+    private final int inverterZoneOffsetSeconds;
+    /**
+     * Number of seconds difference between the application time and the inverter measurement time.
+     * Useful if the inverter is not keeping good time. Value is positive if the inverter time is
+     * earlier than the application time.
+     */
+    private final long appTimeDifference;
     /**
      * Power generation in Watts
      */
@@ -37,11 +39,11 @@ public class CurrentPower {
      */
     private boolean uploaded;
 
-    public CurrentPower(String inverterTimestamp, Long inverterEpochTimestamp, String applicationTimestamp,
+    public CurrentPower(long inverterEpochTimestamp, int inverterZoneOffsetSeconds, long appTimeDifference,
                         double generation, double consumption, boolean uploaded) {
-        this.inverterTimestamp = inverterTimestamp;
         this.inverterEpochTimestamp = inverterEpochTimestamp;
-        this.applicationTimestamp = applicationTimestamp;
+        this.inverterZoneOffsetSeconds = inverterZoneOffsetSeconds;
+        this.appTimeDifference = appTimeDifference;
         this.generation = generation;
         this.consumption = consumption;
         this.uploaded = uploaded;
@@ -51,16 +53,16 @@ public class CurrentPower {
         return id;
     }
 
-    public String getInverterTimestamp() {
-        return inverterTimestamp;
-    }
-
-    public Long getInverterEpochTimestamp() {
+    public long getInverterEpochTimestamp() {
         return inverterEpochTimestamp;
     }
 
-    public String getApplicationTimestamp() {
-        return applicationTimestamp;
+    public int getInverterZoneOffsetSeconds() {
+        return inverterZoneOffsetSeconds;
+    }
+
+    public long getAppTimeDifference() {
+        return appTimeDifference;
     }
 
     public double getGeneration() {
@@ -83,9 +85,9 @@ public class CurrentPower {
     public String toString() {
         return "CurrentPower{" +
                 "id=" + id +
-                ", inverterTimestamp='" + inverterTimestamp + '\'' +
                 ", inverterEpochTimestamp=" + inverterEpochTimestamp +
-                ", applicationTimestamp='" + applicationTimestamp + '\'' +
+                ", inverterZoneOffsetSeconds=" + inverterZoneOffsetSeconds +
+                ", appTimeDifference=" + appTimeDifference +
                 ", generation=" + generation +
                 ", consumption=" + consumption +
                 ", uploaded=" + uploaded +

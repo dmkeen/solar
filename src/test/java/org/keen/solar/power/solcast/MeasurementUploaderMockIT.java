@@ -26,11 +26,12 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.keen.solar.power.solcast.MeasurementSerializer.PERIOD_END_FORMAT;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -68,9 +69,10 @@ public class MeasurementUploaderMockIT {
         // Given
         List<CurrentPower> currentPowerList = new ArrayList<>();
         double generationWatts = 1245D;
-        Instant now = Instant.now();
+        Instant now = Instant.now().minus(10, ChronoUnit.MINUTES);
         long inverterEpochTimestamp = now.toEpochMilli() / 1000;
-        currentPowerList.add(new CurrentPower("", inverterEpochTimestamp, "", generationWatts, 0D, false));
+        currentPowerList.add(new CurrentPower(inverterEpochTimestamp, OffsetDateTime.now().getOffset().getTotalSeconds(),
+                0, generationWatts, 0D, false));
         when(currentPowerRepository.findByUploaded(false)).thenReturn(currentPowerList);
 
         RestTemplate restTemplate = restTemplateBuilder.build();
@@ -112,12 +114,14 @@ public class MeasurementUploaderMockIT {
         // Given
         List<CurrentPower> currentPowerList = new ArrayList<>();
         double generationWatts = 1245D;
-        Instant now = Instant.now();
+        Instant now = Instant.now().minus(20, ChronoUnit.MINUTES);
         long inverterEpochTimestamp = now.toEpochMilli() / 1000;
-        currentPowerList.add(new CurrentPower("", inverterEpochTimestamp, "", generationWatts, 0D, false));
+        currentPowerList.add(new CurrentPower(inverterEpochTimestamp, OffsetDateTime.now().getOffset().getTotalSeconds(),
+                0, generationWatts, 0D, false));
         Instant nowPlus5Mins = now.plus(5, ChronoUnit.MINUTES);
         long inverterEpochTimestampPlus5Mins = nowPlus5Mins.toEpochMilli() / 1000;
-        currentPowerList.add(new CurrentPower("", inverterEpochTimestampPlus5Mins, "", generationWatts, 0D, false));
+        currentPowerList.add(new CurrentPower(inverterEpochTimestampPlus5Mins, OffsetDateTime.now().getOffset().getTotalSeconds(),
+                0, generationWatts, 0D, false));
         when(currentPowerRepository.findByUploaded(false)).thenReturn(currentPowerList);
 
         RestTemplate restTemplate = restTemplateBuilder.build();
@@ -154,8 +158,8 @@ public class MeasurementUploaderMockIT {
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<CurrentPower>> argumentCaptor = ArgumentCaptor.forClass(List.class);
-        verify(currentPowerRepository).saveAll(argumentCaptor.capture());
-        List<CurrentPower> captorValue = argumentCaptor.getValue();
+        verify(currentPowerRepository, times(2)).saveAll(argumentCaptor.capture());
+        List<CurrentPower> captorValue = argumentCaptor.getAllValues().stream().flatMap(List::stream).toList();
         Assert.notEmpty(captorValue, "Expected non-empty list to be saved");
         Assert.state(captorValue.size() == 2, "Expected 2 CurrentPowers to be saved");
         CurrentPower currentPower = captorValue.get(0);

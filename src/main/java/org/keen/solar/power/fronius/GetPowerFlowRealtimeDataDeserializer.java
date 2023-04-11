@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import org.keen.solar.power.domain.CurrentPower;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 
 /**
@@ -24,18 +25,20 @@ public class GetPowerFlowRealtimeDataDeserializer extends StdDeserializer<Curren
     }
 
     @Override
-    public CurrentPower deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-        String applicationTimestamp = OffsetDateTime.now().toString();
+    public CurrentPower deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        OffsetDateTime applicationTimestamp = OffsetDateTime.now();
 
         JsonNode jsonNode = p.getCodec().readTree(p);
 
         String timestampString = jsonNode.get("Head").get("Timestamp").textValue();
-        OffsetDateTime timestamp = OffsetDateTime.parse(timestampString);
+        OffsetDateTime inverterTimestamp = OffsetDateTime.parse(timestampString);
 
         JsonNode siteNode = jsonNode.get("Body").get("Data").get("Site");
         double powerGeneration = siteNode.get("P_PV").asDouble();
         double powerConsumption = siteNode.get("P_Load").asDouble();
 
-        return new CurrentPower(timestampString, timestamp.toEpochSecond(), applicationTimestamp, powerGeneration, powerConsumption, false);
+        return new CurrentPower(inverterTimestamp.toEpochSecond(), inverterTimestamp.getOffset().getTotalSeconds(),
+                Duration.between(inverterTimestamp, applicationTimestamp).getSeconds(),
+                powerGeneration, powerConsumption, false);
     }
 }

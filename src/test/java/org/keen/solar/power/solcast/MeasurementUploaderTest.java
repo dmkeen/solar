@@ -113,8 +113,9 @@ public class MeasurementUploaderTest {
         ConcurrentLinkedQueue<CurrentPower> currentPowerQueue = new ConcurrentLinkedQueue<>();
         Random random = new Random();
         DoubleStream doubleStream = random.doubles(listLength, 0, 4000);
-        doubleStream.forEach(value -> currentPowerQueue.add(new CurrentPower("",
-                startTime.plusSeconds(atomicLong.getAndAdd(1)).toEpochMilli() / 1000, "",
+        int zoneOffsetSeconds = OffsetDateTime.now().getOffset().getTotalSeconds();
+        doubleStream.forEach(value -> currentPowerQueue.add(new CurrentPower(
+                startTime.plusSeconds(atomicLong.getAndAdd(1)).toEpochMilli() / 1000, zoneOffsetSeconds, 0,
                 value, 500D, false)));
         return new ArrayList<>(currentPowerQueue);
     }

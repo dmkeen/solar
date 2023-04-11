@@ -8,12 +8,9 @@ import org.keen.solar.power.domain.Measurements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.event.EventListener;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -72,10 +69,7 @@ public class MeasurementUploader {
     /**
      * Uploads all measurements not yet uploaded to Solcast
      */
-    @EventListener(classes = ApplicationReadyEvent.class)
-    @Scheduled(cron = "${app.solcast.measurement-upload-cron}")
     public void uploadAll() {
-        // TODO: Don't upload if we've uploaded recently (configurable)
         List<CurrentPower> currentPowerNotUploaded = repository.findByUploaded(false);
         doUpload(currentPowerNotUploaded);
     }

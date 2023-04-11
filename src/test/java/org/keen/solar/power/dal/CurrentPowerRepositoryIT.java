@@ -26,7 +26,8 @@ public class CurrentPowerRepositoryIT {
     public void givenCurrentPower_whenSave_thenSavedToRepository() {
         // Given
         OffsetDateTime currentTime = OffsetDateTime.now();
-        CurrentPower currentPower = new CurrentPower(currentTime.toString(), currentTime.toEpochSecond(), currentTime.toString(), 1000D, 500.45D, false);
+        CurrentPower currentPower = new CurrentPower(currentTime.toEpochSecond(), currentTime.getOffset().getTotalSeconds(),
+                0, 1000D, 500.45D, false);
 
         // When
         CurrentPower savedCurrentPower = repository.save(currentPower);
@@ -39,13 +40,17 @@ public class CurrentPowerRepositoryIT {
     public void givenCurrentPowerSaved_whenFindByNotUploaded_thenNonUploadedCurrentPowerReturned() {
         // Given
         OffsetDateTime currentTime = OffsetDateTime.now();
-        CurrentPower currentPower1 = new CurrentPower(currentTime.toString(), currentTime.toEpochSecond(), currentTime.toString(), 1000D, 500.45D, false);
+        CurrentPower currentPower1 = new CurrentPower(currentTime.toEpochSecond(), currentTime.getOffset().getTotalSeconds(),
+                0, 1000D, 500.45D, false);
         currentTime = currentTime.plusSeconds(1);
-        CurrentPower currentPower2 = new CurrentPower(currentTime.toString(), currentTime.toEpochSecond(), currentTime.toString(), 2000D, 600.45D, false);
+        CurrentPower currentPower2 = new CurrentPower(currentTime.toEpochSecond(), currentTime.getOffset().getTotalSeconds(),
+                0, 2000D, 600.45D, false);
         currentTime = currentTime.plusSeconds(1);
-        CurrentPower currentPower3 = new CurrentPower(currentTime.toString(), currentTime.toEpochSecond(), currentTime.toString(), 3000D, 700.45D, false);
+        CurrentPower currentPower3 = new CurrentPower(currentTime.toEpochSecond(), currentTime.getOffset().getTotalSeconds(),
+                0, 3000D, 700.45D, false);
         currentTime = currentTime.plusSeconds(1);
-        CurrentPower currentPower4 = new CurrentPower(currentTime.toString(), currentTime.toEpochSecond(), currentTime.toString(), 4000D, 800.45D, true);
+        CurrentPower currentPower4 = new CurrentPower(currentTime.toEpochSecond(), currentTime.getOffset().getTotalSeconds(),
+                0, 4000D, 800.45D, true);
 
         repository.save(currentPower1);
         repository.save(currentPower2);
@@ -66,13 +71,17 @@ public class CurrentPowerRepositoryIT {
     public void givenCurrentPowerSaved_whenFindByUploaded_thenUploadedCurrentPowerReturned() {
         // Given
         OffsetDateTime currentTime = OffsetDateTime.now();
-        CurrentPower currentPower1 = new CurrentPower(currentTime.toString(), currentTime.toEpochSecond(), currentTime.toString(), 1000D, 500.45D, false);
+        CurrentPower currentPower1 = new CurrentPower(currentTime.toEpochSecond(), currentTime.getOffset().getTotalSeconds(),
+                0, 1000D, 500.45D, false);
         currentTime = currentTime.plusSeconds(1);
-        CurrentPower currentPower2 = new CurrentPower(currentTime.toString(), currentTime.toEpochSecond(), currentTime.toString(), 2000D, 600.45D, false);
+        CurrentPower currentPower2 = new CurrentPower(currentTime.toEpochSecond(), currentTime.getOffset().getTotalSeconds(),
+                0, 2000D, 600.45D, false);
         currentTime = currentTime.plusSeconds(1);
-        CurrentPower currentPower3 = new CurrentPower(currentTime.toString(), currentTime.toEpochSecond(), currentTime.toString(), 3000D, 700.45D, false);
+        CurrentPower currentPower3 = new CurrentPower(currentTime.toEpochSecond(), currentTime.getOffset().getTotalSeconds(),
+                0, 3000D, 700.45D, false);
         currentTime = currentTime.plusSeconds(1);
-        CurrentPower currentPower4 = new CurrentPower(currentTime.toString(), currentTime.toEpochSecond(), currentTime.toString(), 4000D, 800.45D, true);
+        CurrentPower currentPower4 = new CurrentPower(currentTime.toEpochSecond(), currentTime.getOffset().getTotalSeconds(),
+                0, 4000D, 800.45D, true);
 
         repository.save(currentPower1);
         repository.save(currentPower2);
@@ -91,13 +100,17 @@ public class CurrentPowerRepositoryIT {
     public void givenCurrentPowerSaved_whenFindByUploadedAndTimestamp_thenNonUploadedCurrentPowerWithinTimeRangeReturned() {
         // Given
         OffsetDateTime currentTime = OffsetDateTime.now();
-        CurrentPower currentPower1 = new CurrentPower(currentTime.toString(), currentTime.toEpochSecond(), currentTime.toString(), 1000D, 500.45D, false);
+        CurrentPower currentPower1 = new CurrentPower(currentTime.toEpochSecond(), currentTime.getOffset().getTotalSeconds(),
+                0, 1000D, 500.45D, false);
         OffsetDateTime currentTime2 = currentTime.plusSeconds(1);
-        CurrentPower currentPower2 = new CurrentPower(currentTime2.toString(), currentTime2.toEpochSecond(), currentTime2.toString(), 2000D, 600.45D, false);
+        CurrentPower currentPower2 = new CurrentPower(currentTime2.toEpochSecond(), currentTime.getOffset().getTotalSeconds(),
+                0, 2000D, 600.45D, false);
         OffsetDateTime currentTime3 = currentTime.plusSeconds(2);
-        CurrentPower currentPower3 = new CurrentPower(currentTime3.toString(), currentTime3.toEpochSecond(), currentTime3.toString(), 3000D, 700.45D, false);
+        CurrentPower currentPower3 = new CurrentPower(currentTime3.toEpochSecond(), currentTime.getOffset().getTotalSeconds(),
+                0, 3000D, 700.45D, false);
         OffsetDateTime currentTime4 = currentTime.plusSeconds(3);
-        CurrentPower currentPower4 = new CurrentPower(currentTime4.toString(), currentTime4.toEpochSecond(), currentTime4.toString(), 4000D, 800.45D, true);
+        CurrentPower currentPower4 = new CurrentPower(currentTime4.toEpochSecond(), currentTime.getOffset().getTotalSeconds(),
+                0, 4000D, 800.45D, true);
 
         repository.save(currentPower1);
         repository.save(currentPower2);
@@ -108,9 +121,9 @@ public class CurrentPowerRepositoryIT {
         List<CurrentPower> notUploaded = repository.findByUploadedAndInverterEpochTimestampBetween(false, currentTime2.toEpochSecond(), currentTime4.toEpochSecond());
 
         // Then
+        Assert.state(notUploaded.size() == 2, "Did not expect currentPower1 or currentPower4 to be in the list");
         Assert.state(EqualsBuilder.reflectionEquals(currentPower2, notUploaded.get(0)), "Expected currentPower2 to be in the list");
         Assert.state(EqualsBuilder.reflectionEquals(currentPower3, notUploaded.get(1)), "Expected currentPower3 to be in the list");
-        Assert.state(notUploaded.size() == 2, "Did not expect currentPower1 or currentPower4 to be in the list");
     }
 
 }

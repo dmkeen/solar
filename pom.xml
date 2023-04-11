@@ -11,7 +11,7 @@
 
 	<groupId>org.keen</groupId>
 	<artifactId>solar</artifactId>
-	<version>2.0.2</version>
+	<version>2.1.0</version>
 
 	<name>solar</name>
 	<description>Retrieves solar data from a Fronius inverter and persists it to a data store.</description>
@@ -76,6 +76,28 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<excludes>
+						<!-- Excluding ForecastPersisterIT and ForecastRetrieverIT due to API call limit -->
+						<exclude>**/ForecastPersisterIT.java</exclude>
+						<exclude>**/ForecastRetrieverIT.java</exclude>
+						<!-- Excluding tests which call the Fronius API and hence will only run locally -->
+						<exclude>**/CurrentPowerRetrieverIT.java</exclude>
+						<exclude>**/StringDataRetrieverIT.java</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
