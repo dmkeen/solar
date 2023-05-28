@@ -37,8 +37,8 @@ public class StringDataRetrieverIT {
         Assertions.assertNotNull(stringPowerList);
         Assertions.assertFalse(stringPowerList.isEmpty());
 
-        Collections.sort(stringPowerList, Comparator.comparing(StringPower::getPeriodEnd));
-        Assertions.assertEquals(OffsetDateTime.now().truncatedTo(ChronoUnit.DAYS), stringPowerList.get(0).getPeriodEnd());
+        Collections.sort(stringPowerList, Comparator.comparing(StringPower::getPeriodEndEpoch));
+        Assertions.assertEquals(OffsetDateTime.now().truncatedTo(ChronoUnit.DAYS).toEpochSecond(), stringPowerList.get(0).getPeriodEndEpoch());
 
         System.out.println(stringPowerList);
     }
@@ -48,7 +48,7 @@ public class StringDataRetrieverIT {
         StringPower stringPower = retriever.getLatest();
 
         Assertions.assertNotNull(stringPower);
-        Assertions.assertTrue(stringPower.getPeriodEnd().isAfter(OffsetDateTime.now().minusMinutes(6)));
+        Assertions.assertTrue(stringPower.getPeriodEndEpoch() > OffsetDateTime.now().minusMinutes(6).toEpochSecond());
 
         System.out.println(stringPower);
     }

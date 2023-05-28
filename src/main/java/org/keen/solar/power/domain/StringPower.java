@@ -4,9 +4,6 @@ package org.keen.solar.power.domain;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Embedded;
 
-import java.time.Duration;
-import java.time.OffsetDateTime;
-
 /**
  * Data for "strings" of panels connected to an inverter for a specified period
  */
@@ -57,17 +54,13 @@ public class StringPower {
     @Id
     private Long id;
     /**
-     * End of the averaging period
-     */
-    private OffsetDateTime periodEnd;
-    /**
      * End of the averaging period, in number of seconds since the epoch
      */
-    private Long periodEndEpoch;
+    private long periodEndEpoch;
     /**
-     * Length of the averaging period
+     * Length of the averaging period in seconds
      */
-    private Duration period;
+    private int periodLengthSeconds;
     /**
      * Data for string 1
      */
@@ -82,11 +75,10 @@ public class StringPower {
     private StringPower() {
     }
 
-    public StringPower(OffsetDateTime periodEnd, Long periodEndEpoch, Duration period, double string1Volts,
+    public StringPower(long periodEndEpoch, int periodLengthSeconds, double string1Volts,
                        double string1Amps, double string2Volts, double string2Amps) {
-        this.periodEnd = periodEnd;
         this.periodEndEpoch = periodEndEpoch;
-        this.period = period;
+        this.periodLengthSeconds = periodLengthSeconds;
         this.string1Data = new StringData(string1Volts, string1Amps);
         this.string2Data = new StringData(string2Volts, string2Amps);
     }
@@ -95,16 +87,12 @@ public class StringPower {
         return id;
     }
 
-    public OffsetDateTime getPeriodEnd() {
-        return periodEnd;
-    }
-
-    public Long getPeriodEndEpoch() {
+    public long getPeriodEndEpoch() {
         return periodEndEpoch;
     }
 
-    public Duration getPeriod() {
-        return period;
+    public int getPeriodLengthSeconds() {
+        return periodLengthSeconds;
     }
 
     public StringData getString1Data() {
@@ -118,8 +106,8 @@ public class StringPower {
     @Override
     public String toString() {
         return "StringPower{" +
-                "periodEnd=" + periodEnd +
-                ", period=" + period +
+                "periodEndEpoch=" + periodEndEpoch +
+                ", period=" + periodLengthSeconds +
                 ", string1=" + string1Data +
                 ", string2=" + string2Data +
                 '}';

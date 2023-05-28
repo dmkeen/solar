@@ -8,9 +8,7 @@ import org.keen.solar.power.domain.StringPower;
 import org.keen.solar.power.domain.StringPowers;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -53,8 +51,8 @@ public class StringPowersDeserializer extends StdDeserializer<StringPowers> {
             Map.Entry<String, JsonNode> voltage1 = voltageString1.next();
             Map.Entry<String, JsonNode> voltage2 = voltageString2.next();
             OffsetDateTime periodEnd = startDateTime.plusSeconds(Long.parseLong(current1.getKey()));
-            stringPowers.add(new StringPower(periodEnd, periodEnd.toEpochSecond(),
-                    Duration.of(5, ChronoUnit.MINUTES),
+            stringPowers.add(new StringPower(periodEnd.toEpochSecond(),
+                    300,
                     voltage1.getValue().asDouble(), current1.getValue().asDouble(),
                     voltage2.getValue().asDouble(), current2.getValue().asDouble()));
         }
