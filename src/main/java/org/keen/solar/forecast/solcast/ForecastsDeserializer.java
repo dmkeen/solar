@@ -41,7 +41,7 @@ public class ForecastsDeserializer extends StdDeserializer<Forecasts> {
             long periodEndEpoch = OffsetDateTime.parse(period_end).toEpochSecond();
             Duration period = Duration.parse(forecastNode.get("period").textValue());
 
-            generationForecasts.add(new GenerationForecast(pv_estimate, pv_estimate10, pv_estimate90, period_end, periodEndEpoch, period));
+            generationForecasts.add(new GenerationForecast(pv_estimate, pv_estimate10, pv_estimate90, periodEndEpoch, (int) period.toSeconds()));
         });
 
         Forecasts forecasts = new Forecasts();

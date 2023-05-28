@@ -30,7 +30,7 @@ public class ForecastPersister {
         // Not particularly efficient, given that each forecast is retrieved individually from the database.
         // Spring Data JDBC doesn't provide a mechanism to write queries that take collections as parameters.
         forecasts.forEach(forecast -> {
-            GenerationForecast existingForecast = repository.findByPeriodEnd(forecast.getPeriod_end());
+            GenerationForecast existingForecast = repository.findByPeriodEnd(forecast.getPeriod_end_epoch());
             if (existingForecast != null) {
                 forecast.setId(existingForecast.getId());
             }

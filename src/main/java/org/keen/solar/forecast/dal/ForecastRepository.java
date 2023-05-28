@@ -6,8 +6,8 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface ForecastRepository extends CrudRepository<GenerationForecast, Long> {
 
-    @Query("SELECT id, pv_estimate, pv_estimate10, pv_estimate90, period_end, period_end_epoch, period" +
+    @Query("SELECT id, pv_estimate, pv_estimate10, pv_estimate90, period_end_epoch, period_length_seconds" +
             " FROM generation_forecast f" +
-            " WHERE f.period_end = :periodEnd")
-    GenerationForecast findByPeriodEnd(String periodEnd);
+            " WHERE f.period_end_epoch = :periodEndEpoch")
+    GenerationForecast findByPeriodEnd(long periodEndEpoch);
 }

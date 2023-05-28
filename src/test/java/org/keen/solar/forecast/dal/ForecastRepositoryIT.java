@@ -26,7 +26,7 @@ public class ForecastRepositoryIT {
     public void givenCurrentPower_whenSave_thenSavedToRepository() {
         // Given
         OffsetDateTime currentTime = OffsetDateTime.now();
-        GenerationForecast forecast = new GenerationForecast(2D, 1D, 3D, currentTime.toString(), currentTime.toEpochSecond(), Duration.ofMinutes(30));
+        GenerationForecast forecast = new GenerationForecast(2D, 1D, 3D, currentTime.toEpochSecond(), 30*60);
 
         // When
         GenerationForecast savedForecast = repository.save(forecast);

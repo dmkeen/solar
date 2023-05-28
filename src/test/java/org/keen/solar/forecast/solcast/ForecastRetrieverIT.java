@@ -28,11 +28,10 @@ public class ForecastRetrieverIT {
         List<GenerationForecast> forecasts = retriever.retrieve();
 
         Assert.notEmpty(forecasts, "Expected forecasts to be returned");
-        Assert.notNull(forecasts.get(0).getPeriod(), "Expected period to be populated");
-        Assert.notNull(forecasts.get(0).getPeriod_end(), "Expected period end to be populated");
-        Assert.notNull(forecasts.get(0).getPeriod_end_epoch(), "Expected period end epoch to be populated");
-        Assert.notNull(forecasts.get(0).getPv_estimate(), "Expected pv estimate to be populated");
-        Assert.notNull(forecasts.get(0).getPv_estimate10(), "Expected pv estimate 10 to be populated");
-        Assert.notNull(forecasts.get(0).getPv_estimate90(), "Expected pv estimate 90 to be populated");
+        Assert.state(forecasts.get(0).getPeriod_length_seconds() > 0, "Expected period length to be populated");
+        Assert.state(forecasts.get(0).getPeriod_end_epoch() > 0, "Expected period end epoch to be populated");
+        Assert.state(forecasts.get(0).getPv_estimate() > 0, "Expected pv estimate to be populated");
+        Assert.state(forecasts.get(0).getPv_estimate10() > 0, "Expected pv estimate 10 to be populated");
+        Assert.state(forecasts.get(0).getPv_estimate90() > 0, "Expected pv estimate 90 to be populated");
     }
 }

@@ -1,5 +1,6 @@
 package org.keen.solar.forecast.solcast;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.keen.solar.forecast.domain.Forecasts;
 import org.keen.solar.forecast.domain.GenerationForecast;
@@ -9,7 +10,6 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -40,15 +40,14 @@ public class ForecastsDeserializerTest {
         GenerationForecast forecast = forecastList.get(0);
         String periodEndString = "2020-03-14T01:30:00.0000000Z";
         Long periodEndEpoch = OffsetDateTime.parse(periodEndString).toEpochSecond();
-        Duration duration = Duration.parse("PT30M");
+        int duration = 30*60;
         double pvEstimate = 1.9614;
         double pvEstimate10 = 1.3395;
         double pvEstimate90 = 2.6258;
-        Assert.state(forecast.getPeriod_end().equals(periodEndString), String.format("Expected period end to be %s but was %s", periodEndString, forecast.getPeriod_end()));
-        Assert.state(forecast.getPeriod_end_epoch().equals(periodEndEpoch), String.format("Expected period end epoch to be %s but was %s", periodEndEpoch, forecast.getPeriod_end_epoch()));
-        Assert.state(forecast.getPeriod().equals(duration), String.format("Expected duration to be %s but was %s", duration, forecast.getPeriod()));
-        Assert.state(forecast.getPv_estimate().equals(pvEstimate), String.format("Expected pv estimate to be %s but was %s", pvEstimate, forecast.getPv_estimate()));
-        Assert.state(forecast.getPv_estimate10().equals(pvEstimate10), String.format("Expected pv estimate to be %s but was %s", pvEstimate10, forecast.getPv_estimate10()));
-        Assert.state(forecast.getPv_estimate90().equals(pvEstimate90), String.format("Expected pv estimate to be %s but was %s", pvEstimate90, forecast.getPv_estimate90()));
+        Assertions.assertEquals(periodEndEpoch, forecast.getPeriod_end_epoch(), String.format("Expected period end epoch to be %s but was %s", periodEndEpoch, forecast.getPeriod_end_epoch()));
+        Assertions.assertEquals(duration, forecast.getPeriod_length_seconds(), String.format("Expected duration to be %s but was %s", duration, forecast.getPeriod_length_seconds()));
+        Assertions.assertEquals(pvEstimate, forecast.getPv_estimate(), 0.0001, String.format("Expected pv estimate of %s but was %s", pvEstimate, forecast.getPv_estimate()));
+        Assertions.assertEquals(pvEstimate10, forecast.getPv_estimate10(), 0.0001, String.format("Expected pv estimate 10 of %s but was %s", pvEstimate10, forecast.getPv_estimate10()));
+        Assertions.assertEquals(pvEstimate90, forecast.getPv_estimate90(), 0.0001, String.format("Expected pv estimate 90 of %s but was %s", pvEstimate90, forecast.getPv_estimate90()));
     }
 }
