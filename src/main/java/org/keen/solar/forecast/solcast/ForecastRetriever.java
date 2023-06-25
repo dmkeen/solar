@@ -44,7 +44,7 @@ public class ForecastRetriever {
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
 
-        String url = solcastApiBaseUrl + "/rooftop_sites/" + solcastSiteId + "/forecasts";
+        String url = solcastApiBaseUrl + "/rooftop_sites/" + solcastSiteId + "/forecasts?hours=168";
         logger.info("Retrieving solar forecast from " + url);
 
         ResponseEntity<Forecasts> forecastResponse = restTemplate.exchange(url,
