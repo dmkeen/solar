@@ -9,6 +9,7 @@
       "pluginName": "MySQL"
     }
   ],
+  "__elements": {},
   "__requires": [
     {
       "type": "panel",
@@ -20,7 +21,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.0.0"
+      "version": "10.1.2"
     },
     {
       "type": "datasource",
@@ -45,7 +46,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -55,14 +59,17 @@
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_SOLAR_APP DB}",
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_SOLAR_APP DB}"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -129,9 +136,13 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_SOLAR_APP DB}"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -160,14 +171,14 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Current power surplus/deficit",
       "type": "gauge"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_SOLAR_APP DB}",
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_SOLAR_APP DB}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -199,7 +210,6 @@
         "y": 0
       },
       "id": 11,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -217,9 +227,13 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_SOLAR_APP DB}"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -246,14 +260,14 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Total Power Generated",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_SOLAR_APP DB}",
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_SOLAR_APP DB}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -285,7 +299,6 @@
         "y": 0
       },
       "id": 12,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -303,9 +316,13 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_SOLAR_APP DB}"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -332,14 +349,14 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Total Power Consumed",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_SOLAR_APP DB}",
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_SOLAR_APP DB}"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -373,7 +390,6 @@
         "y": 3
       },
       "id": 13,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -391,9 +407,13 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_SOLAR_APP DB}"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -420,14 +440,14 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Total Power Exported",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_SOLAR_APP DB}",
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_SOLAR_APP DB}"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -460,7 +480,6 @@
         "y": 3
       },
       "id": 14,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -478,9 +497,13 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "10.1.2",
       "targets": [
         {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_SOLAR_APP DB}"
+          },
           "format": "table",
           "group": [],
           "metricColumn": "none",
@@ -507,13 +530,14 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Total Power Imported",
       "type": "stat"
     },
     {
-      "datasource": null,
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_SOLAR_APP DB}"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -521,6 +545,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -532,6 +558,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -577,15 +604,21 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi"
+          "mode": "multi",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.0.0",
       "targets": [
         {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_SOLAR_APP DB}"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -627,8 +660,6 @@
           "where": []
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Power Generation - East/West Split",
       "transformations": [
         {
@@ -651,7 +682,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": "${DS_SOLAR_APP DB}",
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_SOLAR_APP DB}"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -659,6 +693,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -670,6 +706,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -784,15 +821,21 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi"
+          "mode": "multi",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.0.0",
       "targets": [
         {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_SOLAR_APP DB}"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -843,7 +886,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": "${DS_SOLAR_APP DB}",
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_SOLAR_APP DB}"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -851,6 +897,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -862,6 +910,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -929,15 +978,21 @@
             "min"
           ],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.0.0",
       "targets": [
         {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_SOLAR_APP DB}"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -966,13 +1021,14 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Power Generation",
       "type": "timeseries"
     },
     {
-      "datasource": "${DS_SOLAR_APP DB}",
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_SOLAR_APP DB}"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -980,6 +1036,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -991,6 +1049,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1082,15 +1141,21 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.0.0",
       "targets": [
         {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_SOLAR_APP DB}"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -1141,7 +1206,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": "${DS_SOLAR_APP DB}",
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_SOLAR_APP DB}"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1149,6 +1217,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1160,6 +1230,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1242,15 +1313,21 @@
             "min"
           ],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.0.0",
       "targets": [
         {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_SOLAR_APP DB}"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -1279,14 +1356,12 @@
           ]
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Power Consumption",
       "type": "timeseries"
     }
   ],
   "refresh": "10s",
-  "schemaVersion": 30,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -1313,5 +1388,6 @@
   "timezone": "",
   "title": "Solar",
   "uid": "rOPWd5uWz",
-  "version": 7
+  "version": 7,
+  "weekStart": ""
 }
