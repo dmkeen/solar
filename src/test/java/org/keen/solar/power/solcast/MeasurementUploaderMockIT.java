@@ -26,9 +26,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.keen.solar.power.solcast.MeasurementSerializer.PERIOD_END_FORMAT;
 import static org.mockito.Mockito.*;
@@ -91,7 +89,7 @@ public class MeasurementUploaderMockIT {
                 .andExpect(jsonPath("$.measurement.period_end", Matchers.is(expectedPeriodEnd)))
                 .andExpect(jsonPath("$.measurement.period", Matchers.is(Duration.ofMinutes(5).toString())))
                 .andExpect(jsonPath("$.measurement.total_power", Matchers.is(generationWatts / 1000)))
-                .andRespond(withSuccess("{\"site_resource_id\":\"***REMOVED***\",\"measurements\":[{\"period_end\":\""
+                .andRespond(withSuccess("{\"site_resource_id\":\"test-site-id\",\"measurements\":[{\"period_end\":\""
                         + expectedPeriodEnd + "\",\"period\":\"PT5M\",\"total_power\":" + generationWatts / 1000 + "}]}", MediaType.APPLICATION_JSON));
 
         // When
@@ -145,7 +143,7 @@ public class MeasurementUploaderMockIT {
                 .andExpect(jsonPath("$.measurements[1].period_end", Matchers.is(expectedPeriodEndPlus5)))
                 .andExpect(jsonPath("$.measurements[1].period", Matchers.is(Duration.ofMinutes(5).toString())))
                 .andExpect(jsonPath("$.measurements[1].total_power", Matchers.is(generationWatts / 1000)))
-                .andRespond(withSuccess("{\"site_resource_id\":\"***REMOVED***\",\"measurements\":[{\"period_end\":\""
+                .andRespond(withSuccess("{\"site_resource_id\":\"test-site-id\",\"measurements\":[{\"period_end\":\""
                                 + expectedPeriodEnd + "\",\"period\":\"PT5M\",\"total_power\":" + generationWatts / 1000 + "},"
                                 + "{\"period_end\":\"" + expectedPeriodEndPlus5 + "\",\"period\":\"PT5M\",\"total_power\":"
                                 + generationWatts / 1000 + "}]}", MediaType.APPLICATION_JSON));
