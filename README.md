@@ -5,7 +5,7 @@ persists the data to a MySQL database for display in Grafana.
 * Monitors instantaneous power generation and consumption
 * Monitors per-string power generation
 * Retrieves Solcast solar forecasts (https://solcast.com/)
-* Uploads actual generation to tune Solcast forecast
+* Uploads actual generation to tune the Solcast forecast
 
 # Usage
 Configure solar panel system in Solcast
@@ -15,6 +15,11 @@ Setup and run the app:
 * Install and run MySQL (https://www.mysql.com/ or https://mariadb.org/)
 * Setup the database using `/src/main/resources/mysql/setup.sql` (substitute your own passwords)
 * Configure properties in `application.properties`
+  * `app.inverter.host` - hostname/IP of the inverter web API
+  * `app.solcast.api-key` - your Solcast API key value
+  * `app.solcast.site-id` - your Solcast site ID
+  * `spring.datasource.username` - your MySQL app user
+  * `spring.datasource.password` - your MySQL app user password
 * Run the application
 
 To view the output, use Grafana:
