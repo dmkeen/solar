@@ -26,3 +26,6 @@ To view the output, use Grafana:
 * Install and run Grafana
 * Configure the MySQL datasource
 * Import the Solar dashboard found in `/src/main/resources/grafana/Solar.json`
+
+Sample output:
+![Grafana dashboard](grafana-dashboard-hd.webp)
