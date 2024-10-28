@@ -3,6 +3,7 @@ package org.keen.solar.solcast.forecast;
 import org.keen.solar.solcast.forecast.dal.ForecastRepository;
 import org.keen.solar.solcast.forecast.domain.GenerationForecast;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,6 +13,7 @@ import java.util.List;
 /**
  * Retrieves the solar panel output forecasts and persists them
  */
+@Profile("!test")
 @RestController
 public class ForecastPersister {
 

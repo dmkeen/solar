@@ -11,7 +11,7 @@
 
 	<groupId>org.keen</groupId>
 	<artifactId>solar</artifactId>
-	<version>3.2.1</version>
+	<version>3.2.2</version>
 
 	<name>solar</name>
 	<description>Retrieves solar data from a Fronius inverter and persists it to a data store.</description>
