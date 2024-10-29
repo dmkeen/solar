@@ -13,8 +13,8 @@ public class StringPowerPersister {
     @Autowired
     private StringPowerRepository repository;
 
-    @Scheduled(cron = "15 0/5 * * * *")
     @Async
+    @Scheduled(cron = "15 0/5 * * * *")
     public void retrieveAndPersist() {
         repository.save(retriever.getLatest());
     }

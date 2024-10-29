@@ -16,8 +16,8 @@ public class CurrentPowerPersister {
     @Autowired
     private CurrentPowerRepository repository;
 
-    @Scheduled(fixedRateString = "${app.current-power.sample-rate-ms}")
     @Async
+    @Scheduled(fixedRateString = "${app.current-power.sample-rate-ms}")
     public void retrieveAndPersist() {
         repository.save(retriever.retrieve());
     }

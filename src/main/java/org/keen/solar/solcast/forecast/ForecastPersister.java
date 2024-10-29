@@ -4,6 +4,7 @@ import org.keen.solar.solcast.forecast.dal.ForecastRepository;
 import org.keen.solar.solcast.forecast.domain.GenerationForecast;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,8 +24,13 @@ public class ForecastPersister {
     @Autowired
     private ForecastRepository repository;
 
-    @PostMapping("/forecast/retrieve")
+    @Async
     @Scheduled(cron = "${app.solcast.forecast-retrieval-cron}")
+    public void retrieveAndPersistAsync() {
+        retrieveAndPersist();
+    }
+
+    @PostMapping("/forecast/retrieve")
     public void retrieveAndPersist() {
         List<GenerationForecast> forecasts = retriever.retrieve();
         // Retrieve the id for any existing forecast for the same period so that it gets updated in the database,
@@ -39,4 +45,5 @@ public class ForecastPersister {
         });
         repository.saveAll(forecasts);
     }
+
 }
