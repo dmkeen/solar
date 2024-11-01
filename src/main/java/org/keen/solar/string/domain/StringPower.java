@@ -4,6 +4,8 @@ package org.keen.solar.string.domain;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Embedded;
 
+import java.math.BigDecimal;
+
 /**
  * Data for "strings" of panels connected to an inverter for a specified period
  */
@@ -23,10 +25,10 @@ public class StringPower {
          */
         private final double power;
 
-        public StringData(double volts, double amps) {
-            this.volts = volts;
-            this.amps = amps;
-            this.power = volts * amps;
+        public StringData(BigDecimal volts, BigDecimal amps) {
+            this.volts = volts.doubleValue();
+            this.amps = amps.doubleValue();
+            this.power = volts.multiply(amps).doubleValue();
         }
 
         public double getVolts() {
@@ -75,8 +77,8 @@ public class StringPower {
     private StringPower() {
     }
 
-    public StringPower(long periodEndEpoch, int periodLengthSeconds, double string1Volts,
-                       double string1Amps, double string2Volts, double string2Amps) {
+    public StringPower(long periodEndEpoch, int periodLengthSeconds, BigDecimal string1Volts,
+                       BigDecimal string1Amps, BigDecimal string2Volts, BigDecimal string2Amps) {
         this.periodEndEpoch = periodEndEpoch;
         this.periodLengthSeconds = periodLengthSeconds;
         this.string1Data = new StringData(string1Volts, string1Amps);

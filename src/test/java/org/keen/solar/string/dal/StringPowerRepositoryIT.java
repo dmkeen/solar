@@ -6,11 +6,12 @@ import org.keen.solar.string.domain.StringPower;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 /**
  * Tests the StringPowerRepository using an in-memory database (configured in /test/resources/application.properties).
- *
+ * <br/>
  * Setting spring.test.database.replace=none prevents @DataJdbcTest from configuring its own in-memory database
  * (which wouldn't have its schema setup by /test/resources/schema-h2.sql).
  */
@@ -24,7 +25,8 @@ public class StringPowerRepositoryIT {
     public void givenStringPower_whenSave_thenSavedToRepository() {
         // Given
         OffsetDateTime now = OffsetDateTime.now();
-        StringPower stringPower = new StringPower(now.toEpochSecond(), 300, 100D, 2D, 200D, 1.5D);
+        StringPower stringPower = new StringPower(now.toEpochSecond(), 300,
+                BigDecimal.valueOf(100), BigDecimal.valueOf(2), BigDecimal.valueOf(200), BigDecimal.valueOf(1.5));
 
         // When
         StringPower savedStringPower = repository.save(stringPower);

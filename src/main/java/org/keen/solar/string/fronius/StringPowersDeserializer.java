@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import org.keen.solar.string.domain.StringPower;
 import org.keen.solar.string.domain.StringPowers;
+import org.keen.solar.util.MathsUtil;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -53,8 +54,10 @@ public class StringPowersDeserializer extends StdDeserializer<StringPowers> {
             OffsetDateTime periodEnd = startDateTime.plusSeconds(Long.parseLong(current1.getKey()));
             stringPowers.add(new StringPower(periodEnd.toEpochSecond(),
                     300,
-                    voltage1.getValue().asDouble(), current1.getValue().asDouble(),
-                    voltage2.getValue().asDouble(), current2.getValue().asDouble()));
+                    MathsUtil.roundMeasurement(voltage1.getValue().decimalValue()),
+                    MathsUtil.roundMeasurement(current1.getValue().decimalValue()),
+                    MathsUtil.roundMeasurement(voltage2.getValue().decimalValue()),
+                    MathsUtil.roundMeasurement(current2.getValue().decimalValue())));
         }
 
         return new StringPowers(stringPowers);
