@@ -1,21 +1,20 @@
 package org.keen.solar.system.domain;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.keen.solar.system.fronius.GetPowerFlowRealtimeDataDeserializer;
 import org.springframework.data.annotation.Id;
 
 /**
  * Represents the power generation and usage at a point in time
  */
-@JsonDeserialize(using = GetPowerFlowRealtimeDataDeserializer.class)
 public class CurrentPower {
 
     @Id
     private Long id;
     /**
-     * Measurement time according to the inverter, in number of seconds since the epoch
+     * Measurement time in number of seconds since the epoch. Note that this
+     * could be the time as given by the inverter or by the running application.
+     * See {@link org.keen.solar.system.fronius.GetPowerFlowRealtimeDataDeserializer}.
      */
-    private final long inverterEpochTimestamp;
+    private final long epochTimestamp;
     /**
      * Number of seconds of the zone offset of the inverter time
      */
@@ -39,9 +38,9 @@ public class CurrentPower {
      */
     private boolean uploaded;
 
-    public CurrentPower(long inverterEpochTimestamp, int inverterZoneOffsetSeconds, long appTimeDifference,
+    public CurrentPower(long epochTimestamp, int inverterZoneOffsetSeconds, long appTimeDifference,
                         double generation, double consumption, boolean uploaded) {
-        this.inverterEpochTimestamp = inverterEpochTimestamp;
+        this.epochTimestamp = epochTimestamp;
         this.inverterZoneOffsetSeconds = inverterZoneOffsetSeconds;
         this.appTimeDifference = appTimeDifference;
         this.generation = generation;
@@ -53,8 +52,8 @@ public class CurrentPower {
         return id;
     }
 
-    public long getInverterEpochTimestamp() {
-        return inverterEpochTimestamp;
+    public long getEpochTimestamp() {
+        return epochTimestamp;
     }
 
     public int getInverterZoneOffsetSeconds() {
@@ -85,7 +84,7 @@ public class CurrentPower {
     public String toString() {
         return "CurrentPower{" +
                 "id=" + id +
-                ", inverterEpochTimestamp=" + inverterEpochTimestamp +
+                ", epochTimestamp=" + epochTimestamp +
                 ", inverterZoneOffsetSeconds=" + inverterZoneOffsetSeconds +
                 ", appTimeDifference=" + appTimeDifference +
                 ", generation=" + generation +

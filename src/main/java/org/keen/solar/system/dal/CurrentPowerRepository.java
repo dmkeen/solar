@@ -9,5 +9,5 @@ public interface CurrentPowerRepository extends CrudRepository<CurrentPower, Lon
 
     List<CurrentPower> findByUploaded(boolean uploaded);
 
-    List<CurrentPower> findByUploadedAndInverterEpochTimestampBetween(boolean uploaded, long start, long end);
+    List<CurrentPower> findByUploadedAndEpochTimestampBetween(boolean uploaded, long start, long end);
 }

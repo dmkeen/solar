@@ -64,7 +64,7 @@ public class PowerCostCalculator {
         uncostedPowers.add(currentPower);
 
         // If we've reached a boundary, sum and persist.
-        if (currentPower.getInverterEpochTimestamp() % collectionFrequencySeconds == 0) {
+        if (currentPower.getEpochTimestamp() % collectionFrequencySeconds == 0) {
             calculateCostAndPersist(currentPower);
         }
     }
@@ -83,13 +83,13 @@ public class PowerCostCalculator {
      * @param currentPower the last CurrentPower to include in the calculation
      */
     private void calculateCostAndPersist(CurrentPower currentPower) {
-        logger.trace("Calculating power cost for period end {}", currentPower.getInverterEpochTimestamp());
+        logger.trace("Calculating power cost for period end {}", currentPower.getEpochTimestamp());
         ZonedDateTime measurementZonedDateTime = getMeasurementZonedDateTime();
         DayOfWeek dayOfWeek = measurementZonedDateTime.getDayOfWeek();
         LocalTime localTime = measurementZonedDateTime.toLocalTime();
         // Get feed-in tariff
         Tariff effectiveFeedInTariff = tariffRepository
-                .findEffectiveFeedInTariff(dayOfWeek, localTime, currentPower.getInverterEpochTimestamp());
+                .findEffectiveFeedInTariff(dayOfWeek, localTime, currentPower.getEpochTimestamp());
         if (effectiveFeedInTariff == null) {
             logger.warn("No effective feed-in tariff found; unable to calculate power cost.");
             return;
@@ -97,7 +97,7 @@ public class PowerCostCalculator {
         BigDecimal feedInTariffWattSecond = convertTariffToWattSeconds(effectiveFeedInTariff);
         // Get usage tariff
         Tariff effectiveUsageTariff = tariffRepository
-                .findEffectiveUsageTariff(dayOfWeek, localTime, currentPower.getInverterEpochTimestamp());
+                .findEffectiveUsageTariff(dayOfWeek, localTime, currentPower.getEpochTimestamp());
         if (effectiveUsageTariff == null) {
             logger.warn("No effective usage tariff found; unable to calculate power cost.");
             return;
@@ -105,9 +105,9 @@ public class PowerCostCalculator {
         BigDecimal usageTariffWattSecond = convertTariffToWattSeconds(effectiveUsageTariff);
 
         BigDecimal costSum = calculateCost(currentPower, feedInTariffWattSecond, usageTariffWattSecond);
-        logger.debug("Cost for period end {}: {}", currentPower.getInverterEpochTimestamp(), costSum);
+        logger.debug("Cost for period end {}: {}", currentPower.getEpochTimestamp(), costSum);
         PowerCost powerCost = new PowerCost(costSum,
-                currentPower.getInverterEpochTimestamp(),
+                currentPower.getEpochTimestamp(),
                 collectionFrequencySeconds);
         powerCostRepository.save(powerCost);
     }
@@ -143,7 +143,7 @@ public class PowerCostCalculator {
             }
             costSum = costSum.add(costPerSecond);
 
-            if (cp.getInverterEpochTimestamp() == currentPower.getInverterEpochTimestamp())
+            if (cp.getEpochTimestamp() == currentPower.getEpochTimestamp())
                 break;
         }
         return costSum.negate();
@@ -169,7 +169,7 @@ public class PowerCostCalculator {
     private ZonedDateTime getMeasurementZonedDateTime() {
         CurrentPower firstPower = uncostedPowers.peek();
         // firstPower will not be null since we always add before calling this method
-        long measurementTimestampEpoch = firstPower.getInverterEpochTimestamp();
+        long measurementTimestampEpoch = firstPower.getEpochTimestamp();
         return Instant.ofEpochSecond(measurementTimestampEpoch).atZone(ZoneId.systemDefault());
     }
 

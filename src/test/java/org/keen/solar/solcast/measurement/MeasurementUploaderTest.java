@@ -90,7 +90,7 @@ public class MeasurementUploaderTest {
         long endDateInUTCEpochSeconds = 1595116800L;
 
         CurrentPowerRepository repository = mock(CurrentPowerRepository.class);
-        when(repository.findByUploadedAndInverterEpochTimestampBetween(eq(false), anyLong(), anyLong())).thenReturn(new ArrayList<>());
+        when(repository.findByUploadedAndEpochTimestampBetween(eq(false), anyLong(), anyLong())).thenReturn(new ArrayList<>());
         MeasurementUploader measurementUploader = new MeasurementUploader(mock(RestTemplateBuilder.class), repository);
 
         // When
@@ -99,7 +99,7 @@ public class MeasurementUploaderTest {
         // Then
         ArgumentCaptor<Long> captorStart = ArgumentCaptor.forClass(Long.class);
         ArgumentCaptor<Long> captorEnd = ArgumentCaptor.forClass(Long.class);
-        verify(repository).findByUploadedAndInverterEpochTimestampBetween(eq(false), captorStart.capture(), captorEnd.capture());
+        verify(repository).findByUploadedAndEpochTimestampBetween(eq(false), captorStart.capture(), captorEnd.capture());
         Long startValue = captorStart.getValue();
         Long endValue = captorEnd.getValue();
         Assert.state(startValue.equals(startDateInUTCEpochSeconds), String.format("Expected %s to be converted to %d but was %d",

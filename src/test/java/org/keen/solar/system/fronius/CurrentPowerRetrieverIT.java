@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keen.solar.config.TestConfiguration;
 import org.keen.solar.system.domain.CurrentPower;
-import org.keen.solar.system.fronius.CurrentPowerRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -27,7 +26,7 @@ public class CurrentPowerRetrieverIT {
     public void givenInverterIsOnline_whenRetrieve_thenCurrentPowerReturned() {
         CurrentPower currentPower = retriever.retrieve();
 
-        Assert.state(currentPower.getInverterEpochTimestamp() > 0, "Expected inverter epoch timestamp to be populated");
+        Assert.state(currentPower.getEpochTimestamp() > 0, "Expected epoch timestamp to be populated");
         int zoneOffsetSeconds = OffsetDateTime.now().getOffset().getTotalSeconds();
         Assert.state(currentPower.getInverterZoneOffsetSeconds() == zoneOffsetSeconds,
                 String.format("Expected zone offset seconds to be %d but was %d", zoneOffsetSeconds, currentPower.getInverterZoneOffsetSeconds()));

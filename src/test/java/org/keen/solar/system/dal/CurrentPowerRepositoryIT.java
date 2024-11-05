@@ -2,7 +2,6 @@ package org.keen.solar.system.dal;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.jupiter.api.Test;
-import org.keen.solar.system.dal.CurrentPowerRepository;
 import org.keen.solar.system.domain.CurrentPower;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
@@ -119,7 +118,7 @@ public class CurrentPowerRepositoryIT {
         repository.save(currentPower4);
 
         // When
-        List<CurrentPower> notUploaded = repository.findByUploadedAndInverterEpochTimestampBetween(false, currentTime2.toEpochSecond(), currentTime4.toEpochSecond());
+        List<CurrentPower> notUploaded = repository.findByUploadedAndEpochTimestampBetween(false, currentTime2.toEpochSecond(), currentTime4.toEpochSecond());
 
         // Then
         Assert.state(notUploaded.size() == 2, "Did not expect currentPower1 or currentPower4 to be in the list");

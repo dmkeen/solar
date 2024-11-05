@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import org.keen.solar.system.domain.CurrentPower;
 import org.keen.solar.util.MathsUtil;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.jackson.JsonComponent;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -14,10 +17,16 @@ import java.time.OffsetDateTime;
 /**
  * Deserializes the result from Fronius API call /solar_api/v1/GetPowerFlowRealtimeData.fcgi into a CurrentPower object
  */
+@JsonComponent
 public class GetPowerFlowRealtimeDataDeserializer extends StdDeserializer<CurrentPower> {
+
+    @Value("${app.current-power.use-inverter-timestamp}")
+    private boolean useInverterTimestamp;
 
     public GetPowerFlowRealtimeDataDeserializer() {
         this(CurrentPower.class);
+        LoggerFactory.getLogger(GetPowerFlowRealtimeDataDeserializer.class)
+                .info("useInverterTimestamp configured as: {}", useInverterTimestamp);
     }
 
     public GetPowerFlowRealtimeDataDeserializer(Class<?> vc) {
@@ -37,7 +46,14 @@ public class GetPowerFlowRealtimeDataDeserializer extends StdDeserializer<Curren
         double powerGeneration = MathsUtil.roundMeasurement(siteNode.get("P_PV").decimalValue()).doubleValue();
         double powerConsumption = MathsUtil.roundMeasurement(siteNode.get("P_Load").decimalValue()).doubleValue();
 
-        return new CurrentPower(inverterTimestamp.toEpochSecond(), inverterTimestamp.getOffset().getTotalSeconds(),
+        OffsetDateTime timestamp;
+        if (useInverterTimestamp) {
+            timestamp = inverterTimestamp;
+        } else {
+            timestamp = applicationTimestamp;
+        }
+
+        return new CurrentPower(timestamp.toEpochSecond(), applicationTimestamp.getOffset().getTotalSeconds(),
                 Duration.between(inverterTimestamp, applicationTimestamp).getSeconds(),
                 powerGeneration, powerConsumption, false);
     }

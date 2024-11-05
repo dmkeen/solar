@@ -62,7 +62,7 @@ public class MeasurementUploader {
         long endTimestamp = end.atStartOfDay(ZoneOffset.UTC).toEpochSecond();
         logger.info(String.format("Retrieving power generation not yet uploaded between %s (%d) and %s (%d)",
                 start.toString(), startTimestamp, end.toString(), endTimestamp));
-        List<CurrentPower> currentPowerNotUploaded = repository.findByUploadedAndInverterEpochTimestampBetween(false, startTimestamp, endTimestamp);
+        List<CurrentPower> currentPowerNotUploaded = repository.findByUploadedAndEpochTimestampBetween(false, startTimestamp, endTimestamp);
         doUpload(currentPowerNotUploaded);
     }
 
@@ -165,7 +165,7 @@ public class MeasurementUploader {
         int groupByMinutes = 5;
         int groupBySeconds = groupByMinutes * 60;
         Map<Long, List<CurrentPower>> currentPowerByPeriod = currentPowerList.stream()
-                .collect(Collectors.groupingBy(currentPower -> currentPower.getInverterEpochTimestamp() / groupBySeconds));
+                .collect(Collectors.groupingBy(currentPower -> currentPower.getEpochTimestamp() / groupBySeconds));
         return currentPowerByPeriod.entrySet().stream().map(listEntry -> {
             List<CurrentPower> powerList = listEntry.getValue();
             // Calculate average power generated for this 5 minute period
