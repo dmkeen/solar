@@ -13,7 +13,8 @@ import javax.sql.DataSource;
 @Configuration
 @EnableJdbcRepositories({"org.keen.solar.solcast.forecast.dal",
         "org.keen.solar.string.dal",
-        "org.keen.solar.system.dal"})
+        "org.keen.solar.system.dal",
+        "org.keen.solar.financial.dal"})
 public class DalConfiguration extends AbstractJdbcConfiguration {
 
     @Autowired

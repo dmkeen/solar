@@ -3,6 +3,7 @@ Monitors solar panel output using the Fronius inverter API and power consumption
 persists the data to a MySQL database for display in Grafana.
 
 * Monitors instantaneous power generation and consumption
+* Calculate cost of power used
 * Monitors per-string power generation
 * Retrieves Solcast solar forecasts (https://solcast.com/)
 * Uploads actual generation to tune the Solcast forecast

@@ -31,7 +31,7 @@ public class CurrentPower {
      */
     private final double generation;
     /**
-     * Power consumption in Watts
+     * Power consumption in Watts, represented as a negative value
      */
     private final double consumption;
     /**
