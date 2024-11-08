@@ -771,6 +771,361 @@
             }
           },
           "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "watt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 3
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_SOLAR_APP DB}"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  period_end_epoch AS \"time\",\n  string1_power AS \"West Panels Power Output\",\n  string2_power AS \"East Panels Power Output\"\nFROM string_power\nORDER BY period_end_epoch",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "string1_power"
+                ],
+                "type": "column"
+              },
+              {
+                "params": [
+                  "West Panels Power Output"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "string2_power"
+                ],
+                "type": "column"
+              },
+              {
+                "params": [
+                  "East Panels Power Output"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "table": "string_power",
+          "timeColumn": "period_end_epoch",
+          "where": []
+        }
+      ],
+      "title": "Power Generation - East/West Split",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Total Output",
+            "binary": {
+              "left": "East Panels Power Output",
+              "operator": "+",
+              "reducer": "sum",
+              "right": "West Panels Power Output"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_SOLAR_APP DB}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "kwatt"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Best Estimate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Best Estimate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "High Estimate"
+            },
+            "properties": [
+              {
+                "id": "custom.fillBelowTo",
+                "value": "Low Estimate"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Low Estimate"
+            },
+            "properties": [
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "High Estimate"
+            },
+            "properties": [
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "hideTimeOverride": true,
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_SOLAR_APP DB}"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  period_end_epoch AS \"time\",\n  pv_estimate AS \"Best Estimate\",\n  pv_estimate10 AS \"Low Estimate\",\n  pv_estimate90 AS \"High Estimate\"\nFROM generation_forecast\nWHERE\n  $__unixEpochFilter(period_end_epoch)\nORDER BY period_end_epoch",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "pv_estimate"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "pv_estimate10"
+                ],
+                "type": "column"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "pv_estimate90"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "generation_forecast",
+          "timeColumn": "period_end_epoch",
+          "timeColumnType": "bigint",
+          "where": [
+            {
+              "name": "$__unixEpochFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": "now/d",
+      "timeShift": "0d/d",
+      "title": "Today's Solar Forecast",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_SOLAR_APP DB}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -809,7 +1164,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 3
+        "y": 11
       },
       "id": 2,
       "options": {
@@ -943,17 +1298,62 @@
               }
             ]
           },
-          "unit": "watt"
+          "unit": "kwatt"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Best Estimate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "High Estimate"
+            },
+            "properties": [
+              {
+                "id": "custom.fillBelowTo",
+                "value": "Low Estimate"
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Low Estimate"
+            },
+            "properties": [
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 9
+        "y": 17
       },
-      "id": 16,
+      "hideTimeOverride": true,
+      "id": 9,
       "options": {
         "legend": {
           "calcs": [],
@@ -962,7 +1362,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
@@ -976,63 +1376,50 @@
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
-          "rawQuery": false,
-          "rawSql": "SELECT\n  period_end_epoch AS \"time\",\n  string1_power AS \"West Panels Power Output\",\n  string2_power AS \"East Panels Power Output\"\nFROM string_power\nORDER BY period_end_epoch",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  period_end_epoch AS \"time\",\n  pv_estimate AS \"Best Estimate\",\n  pv_estimate10 AS \"Low Estimate\",\n  pv_estimate90 AS \"High Estimate\"\nFROM generation_forecast\nWHERE\n  $__unixEpochFilter(period_end_epoch)\nORDER BY period_end_epoch",
           "refId": "A",
           "select": [
             [
               {
                 "params": [
-                  "string1_power"
+                  "pv_estimate"
                 ],
                 "type": "column"
-              },
-              {
-                "params": [
-                  "West Panels Power Output"
-                ],
-                "type": "alias"
               }
             ],
             [
               {
                 "params": [
-                  "string2_power"
+                  "pv_estimate10"
                 ],
                 "type": "column"
-              },
+              }
+            ],
+            [
               {
                 "params": [
-                  "East Panels Power Output"
+                  "pv_estimate90"
                 ],
-                "type": "alias"
+                "type": "column"
               }
             ]
           ],
-          "table": "string_power",
+          "table": "generation_forecast",
           "timeColumn": "period_end_epoch",
-          "where": []
-        }
-      ],
-      "title": "Power Generation - East/West Split",
-      "transformations": [
-        {
-          "id": "calculateField",
-          "options": {
-            "alias": "Total Output",
-            "binary": {
-              "left": "East Panels Power Output",
-              "operator": "+",
-              "reducer": "sum",
-              "right": "West Panels Power Output"
-            },
-            "mode": "binary",
-            "reduce": {
-              "reducer": "sum"
+          "timeColumnType": "bigint",
+          "where": [
+            {
+              "name": "$__unixEpochFilter",
+              "params": [],
+              "type": "macro"
             }
-          }
+          ]
         }
       ],
+      "timeFrom": "+6d",
+      "timeShift": "0d/d",
+      "title": "Weekly Solar Forecast",
       "type": "timeseries"
     },
     {
@@ -1133,7 +1520,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 12
+        "y": 20
       },
       "id": 4,
       "options": {
@@ -1208,396 +1595,9 @@
       ],
       "title": "Power Consumption",
       "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "${DS_SOLAR_APP DB}"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "kwatt"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Best Estimate"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Best Estimate"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "High Estimate"
-            },
-            "properties": [
-              {
-                "id": "custom.fillBelowTo",
-                "value": "Low Estimate"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Low Estimate"
-            },
-            "properties": [
-              {
-                "id": "custom.lineWidth",
-                "value": 0
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "High Estimate"
-            },
-            "properties": [
-              {
-                "id": "custom.lineWidth",
-                "value": 0
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 17
-      },
-      "hideTimeOverride": true,
-      "id": 8,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.3.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "${DS_SOLAR_APP DB}"
-          },
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  period_end_epoch AS \"time\",\n  pv_estimate AS \"Best Estimate\",\n  pv_estimate10 AS \"Low Estimate\",\n  pv_estimate90 AS \"High Estimate\"\nFROM generation_forecast\nWHERE\n  $__unixEpochFilter(period_end_epoch)\nORDER BY period_end_epoch",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "pv_estimate"
-                ],
-                "type": "column"
-              }
-            ],
-            [
-              {
-                "params": [
-                  "pv_estimate10"
-                ],
-                "type": "column"
-              }
-            ],
-            [
-              {
-                "params": [
-                  "pv_estimate90"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "generation_forecast",
-          "timeColumn": "period_end_epoch",
-          "timeColumnType": "bigint",
-          "where": [
-            {
-              "name": "$__unixEpochFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "timeFrom": "now/d",
-      "timeShift": "0d/d",
-      "title": "Today's Solar Forecast",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "${DS_SOLAR_APP DB}"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "kwatt"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Best Estimate"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "High Estimate"
-            },
-            "properties": [
-              {
-                "id": "custom.fillBelowTo",
-                "value": "Low Estimate"
-              },
-              {
-                "id": "custom.lineWidth",
-                "value": 0
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Low Estimate"
-            },
-            "properties": [
-              {
-                "id": "custom.lineWidth",
-                "value": 0
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 20
-      },
-      "hideTimeOverride": true,
-      "id": 9,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.3.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "${DS_SOLAR_APP DB}"
-          },
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  period_end_epoch AS \"time\",\n  pv_estimate AS \"Best Estimate\",\n  pv_estimate10 AS \"Low Estimate\",\n  pv_estimate90 AS \"High Estimate\"\nFROM generation_forecast\nWHERE\n  $__unixEpochFilter(period_end_epoch)\nORDER BY period_end_epoch",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "pv_estimate"
-                ],
-                "type": "column"
-              }
-            ],
-            [
-              {
-                "params": [
-                  "pv_estimate10"
-                ],
-                "type": "column"
-              }
-            ],
-            [
-              {
-                "params": [
-                  "pv_estimate90"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "generation_forecast",
-          "timeColumn": "period_end_epoch",
-          "timeColumnType": "bigint",
-          "where": [
-            {
-              "name": "$__unixEpochFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "timeFrom": "+6d",
-      "timeShift": "0d/d",
-      "title": "Weekly Solar Forecast",
-      "type": "timeseries"
     }
   ],
-  "refresh": "",
+  "refresh": "10s",
   "schemaVersion": 40,
   "tags": [],
   "templating": {
@@ -1611,6 +1611,6 @@
   "timezone": "",
   "title": "Solar",
   "uid": "rOPWd5uWz",
-  "version": 11,
+  "version": 12,
   "weekStart": ""
 }
