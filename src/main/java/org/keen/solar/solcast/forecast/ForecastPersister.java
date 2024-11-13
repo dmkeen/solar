@@ -6,8 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -15,7 +14,7 @@ import java.util.List;
  * Retrieves the solar panel output forecasts and persists them
  */
 @Profile("!test")
-@RestController
+@Service
 public class ForecastPersister {
 
     @Autowired
@@ -30,7 +29,6 @@ public class ForecastPersister {
         retrieveAndPersist();
     }
 
-    @PostMapping("/forecast/retrieve")
     public void retrieveAndPersist() {
         List<GenerationForecast> forecasts = retriever.retrieve();
         // Retrieve the id for any existing forecast for the same period so that it gets updated in the database,

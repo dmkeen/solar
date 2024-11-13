@@ -11,7 +11,7 @@
 
 	<groupId>org.keen</groupId>
 	<artifactId>solar</artifactId>
-	<version>3.4.4</version>
+	<version>3.4.5</version>
 
 	<name>solar</name>
 	<description>Retrieves solar data from a Fronius inverter and persists it to a data store.</description>
@@ -104,7 +104,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>3.0.0</version>
 				<configuration>
 					<excludes>
 						<!-- Excluding ForecastPersisterIT and ForecastRetrieverIT due to API call limit -->

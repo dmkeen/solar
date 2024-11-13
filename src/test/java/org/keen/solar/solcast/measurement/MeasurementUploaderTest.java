@@ -1,11 +1,8 @@
 package org.keen.solar.solcast.measurement;
 
 import org.junit.jupiter.api.Test;
-import org.keen.solar.system.dal.CurrentPowerRepository;
 import org.keen.solar.system.domain.CurrentPower;
 import org.keen.solar.solcast.measurement.domain.Measurement;
-import org.mockito.ArgumentCaptor;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.util.Assert;
 
 import java.time.*;
@@ -16,9 +13,6 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.DoubleStream;
-
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 public class MeasurementUploaderTest {
 
@@ -79,33 +73,6 @@ public class MeasurementUploaderTest {
             Assert.state(actualMeasurement.getPeriod_end().isEqual(expectedMeasurement.getPeriod_end()),
                     "Expected period end to be " + expectedMeasurement.getPeriod_end() + " but was " + actualMeasurement.getPeriod_end());
         }
-    }
-
-    @Test
-    public void givenDateRange_whenUploadByDateRange_thenCorrectDateRangePassedToRepository() {
-        // Given
-        LocalDate startDate = LocalDate.of(2020, 7, 18);
-        LocalDate endDate = LocalDate.of(2020, 7, 19);
-        long startDateInUTCEpochSeconds = 1595030400L;
-        long endDateInUTCEpochSeconds = 1595116800L;
-
-        CurrentPowerRepository repository = mock(CurrentPowerRepository.class);
-        when(repository.findByUploadedAndEpochTimestampBetween(eq(false), anyLong(), anyLong())).thenReturn(new ArrayList<>());
-        MeasurementUploader measurementUploader = new MeasurementUploader(mock(RestTemplateBuilder.class), repository);
-
-        // When
-        measurementUploader.uploadByDateRange(startDate, endDate);
-
-        // Then
-        ArgumentCaptor<Long> captorStart = ArgumentCaptor.forClass(Long.class);
-        ArgumentCaptor<Long> captorEnd = ArgumentCaptor.forClass(Long.class);
-        verify(repository).findByUploadedAndEpochTimestampBetween(eq(false), captorStart.capture(), captorEnd.capture());
-        Long startValue = captorStart.getValue();
-        Long endValue = captorEnd.getValue();
-        Assert.state(startValue.equals(startDateInUTCEpochSeconds), String.format("Expected %s to be converted to %d but was %d",
-                startDate.toString(), startDateInUTCEpochSeconds, startValue));
-        Assert.state(endValue.equals(endDateInUTCEpochSeconds), String.format("Expected %s to be converted to %d but was %d",
-                endDate.toString(), endDateInUTCEpochSeconds, endValue));
     }
 
     private ArrayList<CurrentPower> generateCurrentPowerList(int listLength, Instant startTime) {

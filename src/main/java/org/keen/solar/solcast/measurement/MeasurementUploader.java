@@ -9,12 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.*;
@@ -27,7 +23,6 @@ import java.util.stream.Collectors;
  * See <a href="https://docs.solcast.com.au/#measurements-rooftop-site">Solcast API</a>
  */
 @Service
-@RestController
 public class MeasurementUploader {
 
     private final Logger logger = LoggerFactory.getLogger(MeasurementUploader.class);
@@ -47,23 +42,6 @@ public class MeasurementUploader {
     public MeasurementUploader(RestTemplateBuilder restTemplateBuilder, CurrentPowerRepository repository) {
         this.restTemplate = restTemplateBuilder.build();
         this.repository = repository;
-    }
-
-    /**
-     * Uploads all measurements not yet uploaded to Solcast within the specified date range
-     *
-     * @param start start date (inclusive)
-     * @param end   end date (exclusive)
-     */
-    @PostMapping("/upload")
-    public void uploadByDateRange(@RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
-                                  @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
-        long startTimestamp = start.atStartOfDay(ZoneOffset.UTC).toEpochSecond();
-        long endTimestamp = end.atStartOfDay(ZoneOffset.UTC).toEpochSecond();
-        logger.info(String.format("Retrieving power generation not yet uploaded between %s (%d) and %s (%d)",
-                start.toString(), startTimestamp, end.toString(), endTimestamp));
-        List<CurrentPower> currentPowerNotUploaded = repository.findByUploadedAndEpochTimestampBetween(false, startTimestamp, endTimestamp);
-        doUpload(currentPowerNotUploaded);
     }
 
     /**
