@@ -10,13 +10,13 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.util.Assert;
@@ -47,7 +47,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @TestPropertySource(locations = "/application.properties")
 public class MeasurementUploaderMockIT {
 
-    @MockBean
+    @MockitoBean
     private CurrentPowerRepository currentPowerRepository;
 
     @Autowired
