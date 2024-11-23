@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.keen.solar.financial.dal.TariffRepository;
-import org.keen.solar.financial.dal.PowerCostRepository;
+import org.keen.solar.financial.dal.TariffDao;
+import org.keen.solar.financial.dal.PowerCostDao;
 import org.keen.solar.financial.domain.Tariff;
 import org.keen.solar.financial.domain.PowerCost;
 import org.keen.solar.system.domain.CurrentPower;
@@ -30,16 +30,16 @@ public class PowerCostCalculatorTest {
         // Given
 
         BigDecimal feedInPricePerKwh = BigDecimal.valueOf(33, 3);
-        TariffRepository tariffRepository = mock(TariffRepository.class);
-        when(tariffRepository.findEffectiveFeedInTariff(any(DayOfWeek.class), any(LocalTime.class), anyLong()))
+        TariffDao tariffRepository = mock(TariffDao.class);
+        when(tariffRepository.getEffectiveFeedInTariff(any(DayOfWeek.class), any(LocalTime.class), anyLong()))
                 .thenReturn(new Tariff(true, 0, null, null,
                         null, null, feedInPricePerKwh));
         BigDecimal powerPricePerKwh = BigDecimal.valueOf(4082, 4);
-        when(tariffRepository.findEffectiveUsageTariff(any(DayOfWeek.class), any(LocalTime.class), anyLong()))
+        when(tariffRepository.getEffectiveUsageTariff(any(DayOfWeek.class), any(LocalTime.class), anyLong()))
                 .thenReturn(new Tariff(false, 0, null, null,
                         null, null, powerPricePerKwh));
 
-        PowerCostRepository powerCostRepository = mock(PowerCostRepository.class);
+        PowerCostDao powerCostRepository = mock(PowerCostDao.class);
 
         int collectionFrequencySeconds = 60;
         PowerCostCalculator calculator = new PowerCostCalculator(collectionFrequencySeconds, tariffRepository, powerCostRepository);
@@ -80,8 +80,8 @@ public class PowerCostCalculatorTest {
     @Test
     public void givenNoApplicableTariffFound_whenCollectUncostedPowers_thenNoCostCalculated() {
         // Given
-        TariffRepository tariffRepository = mock(TariffRepository.class);
-        PowerCostRepository powerCostRepository = mock(PowerCostRepository.class);
+        TariffDao tariffRepository = mock(TariffDao.class);
+        PowerCostDao powerCostRepository = mock(PowerCostDao.class);
 
         CurrentPower currentPower = new CurrentPower(1730757659L,100, -100, false);
 
@@ -102,7 +102,7 @@ public class PowerCostCalculatorTest {
 
         // When
         PowerCostCalculator calculator = new PowerCostCalculator(collectionFrequencySeconds,
-                mock(TariffRepository.class), mock(PowerCostRepository.class));
+                mock(TariffDao.class), mock(PowerCostDao.class));
 
         // Then
         Assertions.assertNotNull(calculator);
@@ -116,7 +116,7 @@ public class PowerCostCalculatorTest {
 
         // When/Then
         Assertions.assertThrows(IllegalArgumentException.class, () -> new PowerCostCalculator(collectionFrequencySeconds,
-                mock(TariffRepository.class), mock(PowerCostRepository.class)));
+                mock(TariffDao.class), mock(PowerCostDao.class)));
 
     }
 }

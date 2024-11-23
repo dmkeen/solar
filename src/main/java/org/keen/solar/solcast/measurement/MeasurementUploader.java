@@ -1,6 +1,6 @@
 package org.keen.solar.solcast.measurement;
 
-import org.keen.solar.system.dal.CurrentPowerRepository;
+import org.keen.solar.system.dal.CurrentPowerDao;
 import org.keen.solar.system.domain.CurrentPower;
 import org.keen.solar.solcast.measurement.domain.Measurement;
 import org.keen.solar.solcast.measurement.domain.MeasurementResponse;
@@ -28,7 +28,7 @@ public class MeasurementUploader {
     private final Logger logger = LoggerFactory.getLogger(MeasurementUploader.class);
 
     private final RestTemplate restTemplate;
-    private final CurrentPowerRepository repository;
+    private final CurrentPowerDao repository;
 
     @Value("${app.solcast.base-url}")
     private String solcastApiBaseUrl;
@@ -39,7 +39,7 @@ public class MeasurementUploader {
     @Value("${app.solcast.api-key}")
     private String solcastApiKey;
 
-    public MeasurementUploader(RestTemplateBuilder restTemplateBuilder, CurrentPowerRepository repository) {
+    public MeasurementUploader(RestTemplateBuilder restTemplateBuilder, CurrentPowerDao repository) {
         this.restTemplate = restTemplateBuilder.build();
         this.repository = repository;
     }
@@ -48,7 +48,7 @@ public class MeasurementUploader {
      * Uploads all measurements not yet uploaded to Solcast
      */
     public void uploadAll() {
-        List<CurrentPower> currentPowerNotUploaded = repository.findByUploaded(false);
+        List<CurrentPower> currentPowerNotUploaded = repository.getNotUploaded();
         doUpload(currentPowerNotUploaded);
     }
 
@@ -103,7 +103,7 @@ public class MeasurementUploader {
         logger.debug("Updating repository");
         measurementsUploaded.forEach(measurement -> {
             measurement.getSource().parallelStream().forEach(currentPower -> currentPower.setUploaded(true));
-            repository.saveAll(measurement.getSource());
+            repository.save(measurement.getSource());
         });
         // Log which measurements were in error
         measurementsToUpload.removeAll(returnedMeasurements);

@@ -11,7 +11,7 @@
 
 	<groupId>org.keen</groupId>
 	<artifactId>solar</artifactId>
-	<version>3.5.1</version>
+	<version>3.5.2</version>
 
 	<name>solar</name>
 	<description>Retrieves solar data from a Fronius inverter and persists it to a data store.</description>
@@ -112,7 +112,7 @@
 						<!-- Excluding tests which call the Fronius API and hence will only run locally -->
 						<exclude>**/CurrentPowerRetrieverIT.java</exclude>
 						<exclude>**/StringPowerRetrieverIT.java</exclude>
-						<exclude>**/InverterInfoLoggerIT.java</exclude>
+						<exclude>**/SystemInfoLoggerIT.java</exclude>
 					</excludes>
 				</configuration>
 				<executions>
