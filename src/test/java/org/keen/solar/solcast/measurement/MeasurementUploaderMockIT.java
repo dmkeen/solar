@@ -69,8 +69,7 @@ public class MeasurementUploaderMockIT {
         double generationWatts = 1245D;
         Instant now = Instant.now().minus(10, ChronoUnit.MINUTES);
         long inverterEpochTimestamp = now.toEpochMilli() / 1000;
-        currentPowerList.add(new CurrentPower(inverterEpochTimestamp, OffsetDateTime.now().getOffset().getTotalSeconds(),
-                0, generationWatts, 0D, false));
+        currentPowerList.add(new CurrentPower(inverterEpochTimestamp, generationWatts, 0D, false));
         when(currentPowerRepository.findByUploaded(false)).thenReturn(currentPowerList);
 
         RestTemplate restTemplate = restTemplateBuilder.build();
@@ -114,12 +113,10 @@ public class MeasurementUploaderMockIT {
         double generationWatts = 1245D;
         Instant now = Instant.now().minus(20, ChronoUnit.MINUTES);
         long inverterEpochTimestamp = now.toEpochMilli() / 1000;
-        currentPowerList.add(new CurrentPower(inverterEpochTimestamp, OffsetDateTime.now().getOffset().getTotalSeconds(),
-                0, generationWatts, 0D, false));
+        currentPowerList.add(new CurrentPower(inverterEpochTimestamp, generationWatts, 0D, false));
         Instant nowPlus5Mins = now.plus(5, ChronoUnit.MINUTES);
         long inverterEpochTimestampPlus5Mins = nowPlus5Mins.toEpochMilli() / 1000;
-        currentPowerList.add(new CurrentPower(inverterEpochTimestampPlus5Mins, OffsetDateTime.now().getOffset().getTotalSeconds(),
-                0, generationWatts, 0D, false));
+        currentPowerList.add(new CurrentPower(inverterEpochTimestampPlus5Mins, generationWatts, 0D, false));
         when(currentPowerRepository.findByUploaded(false)).thenReturn(currentPowerList);
 
         RestTemplate restTemplate = restTemplateBuilder.build();

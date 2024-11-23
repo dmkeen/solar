@@ -70,11 +70,9 @@ public class PowerCostCalculatorTest {
                 .map(stringEntry -> {
                     String[] components = stringEntry.split(",");
                     return new CurrentPower(Long.parseLong(components[1]),
-                            Integer.parseInt(components[2]),
-                            Long.parseLong(components[3]),
-                            Double.parseDouble(components[4]),
-                            Double.parseDouble(components[5]),
-                            Boolean.parseBoolean(components[6]));
+                            Double.parseDouble(components[2]),
+                            Double.parseDouble(components[3]),
+                            Boolean.parseBoolean(components[4]));
                 })
                 .toList();
     }
@@ -85,8 +83,7 @@ public class PowerCostCalculatorTest {
         TariffRepository tariffRepository = mock(TariffRepository.class);
         PowerCostRepository powerCostRepository = mock(PowerCostRepository.class);
 
-        CurrentPower currentPower = new CurrentPower(1730757659L, 39600, 0,
-                100, -100, false);
+        CurrentPower currentPower = new CurrentPower(1730757659L,100, -100, false);
 
         PowerCostCalculator calculator = new PowerCostCalculator(60, tariffRepository, powerCostRepository);
 

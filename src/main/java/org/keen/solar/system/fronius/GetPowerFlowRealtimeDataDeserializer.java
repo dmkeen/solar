@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jackson.JsonComponent;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.time.OffsetDateTime;
 
 /**
@@ -53,9 +52,7 @@ public class GetPowerFlowRealtimeDataDeserializer extends StdDeserializer<Curren
             timestamp = applicationTimestamp;
         }
 
-        return new CurrentPower(timestamp.toEpochSecond(), applicationTimestamp.getOffset().getTotalSeconds(),
-                Duration.between(inverterTimestamp, applicationTimestamp).getSeconds(),
-                powerGeneration, powerConsumption, false);
+        return new CurrentPower(timestamp.toEpochSecond(), powerGeneration, powerConsumption, false);
     }
 
 }

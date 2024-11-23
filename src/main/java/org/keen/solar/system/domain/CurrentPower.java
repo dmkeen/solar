@@ -16,16 +16,6 @@ public class CurrentPower {
      */
     private final long epochTimestamp;
     /**
-     * Number of seconds of the zone offset of the inverter time
-     */
-    private final int inverterZoneOffsetSeconds;
-    /**
-     * Number of seconds difference between the application time and the inverter measurement time.
-     * Useful if the inverter is not keeping good time. Value is positive if the inverter time is
-     * earlier than the application time.
-     */
-    private final long appTimeDifference;
-    /**
      * Power generation in Watts
      */
     private final double generation;
@@ -38,11 +28,8 @@ public class CurrentPower {
      */
     private boolean uploaded;
 
-    public CurrentPower(long epochTimestamp, int inverterZoneOffsetSeconds, long appTimeDifference,
-                        double generation, double consumption, boolean uploaded) {
+    public CurrentPower(long epochTimestamp, double generation, double consumption, boolean uploaded) {
         this.epochTimestamp = epochTimestamp;
-        this.inverterZoneOffsetSeconds = inverterZoneOffsetSeconds;
-        this.appTimeDifference = appTimeDifference;
         this.generation = generation;
         this.consumption = consumption;
         this.uploaded = uploaded;
@@ -54,14 +41,6 @@ public class CurrentPower {
 
     public long getEpochTimestamp() {
         return epochTimestamp;
-    }
-
-    public int getInverterZoneOffsetSeconds() {
-        return inverterZoneOffsetSeconds;
-    }
-
-    public long getAppTimeDifference() {
-        return appTimeDifference;
     }
 
     public double getGeneration() {
@@ -85,8 +64,6 @@ public class CurrentPower {
         return "CurrentPower{" +
                 "id=" + id +
                 ", epochTimestamp=" + epochTimestamp +
-                ", inverterZoneOffsetSeconds=" + inverterZoneOffsetSeconds +
-                ", appTimeDifference=" + appTimeDifference +
                 ", generation=" + generation +
                 ", consumption=" + consumption +
                 ", uploaded=" + uploaded +
