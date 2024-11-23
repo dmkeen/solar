@@ -3,6 +3,7 @@ package org.keen.solar.solcast.forecast;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.keen.solar.solcast.forecast.dal.ForecastRepository;
+import org.keen.solar.solcast.forecast.dal.ForecastDaoSpringDataImpl;
 import org.keen.solar.solcast.forecast.domain.GenerationForecast;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.AutoConfigureDataJdbc;
@@ -29,8 +30,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * The in-memory database is configured in /test/resources/application.properties.
  */
 @AutoConfigureDataJdbc
-@RestClientTest(components = ForecastRetriever.class)
-public class ForecastPersisterTest {
+@RestClientTest(components = {ForecastRetriever.class, ForecastDaoSpringDataImpl.class})
+public class ForecastPersisterMockDatabaseTest {
 
     @Autowired
     private ForecastRetriever retriever;

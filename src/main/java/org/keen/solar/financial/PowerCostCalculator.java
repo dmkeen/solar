@@ -1,7 +1,7 @@
 package org.keen.solar.financial;
 
-import org.keen.solar.financial.dal.TariffRepository;
-import org.keen.solar.financial.dal.PowerCostRepository;
+import org.keen.solar.financial.dal.TariffDao;
+import org.keen.solar.financial.dal.PowerCostDao;
 import org.keen.solar.financial.domain.PowerCost;
 import org.keen.solar.financial.domain.Tariff;
 import org.keen.solar.system.domain.CurrentPower;
@@ -39,13 +39,13 @@ public class PowerCostCalculator {
      * up to 3600 (the number of seconds in one hour).
      */
     private final int collectionFrequencySeconds;
-    private final TariffRepository tariffRepository;
-    private final PowerCostRepository powerCostRepository;
+    private final TariffDao tariffRepository;
+    private final PowerCostDao powerCostRepository;
     private final Deque<CurrentPower> uncostedPowers = new ConcurrentLinkedDeque<>();
 
     public PowerCostCalculator(@Value("${app.power.collection-frequency-sec}") int collectionFrequencySeconds,
-                               TariffRepository tariffRepository,
-                               PowerCostRepository powerCostRepository) {
+                               TariffDao tariffRepository,
+                               PowerCostDao powerCostRepository) {
         validateCollectionFrequency(collectionFrequencySeconds);
 
         this.collectionFrequencySeconds = collectionFrequencySeconds;
@@ -89,7 +89,7 @@ public class PowerCostCalculator {
         LocalTime localTime = measurementZonedDateTime.toLocalTime();
         // Get feed-in tariff
         Tariff effectiveFeedInTariff = tariffRepository
-                .findEffectiveFeedInTariff(dayOfWeek, localTime, currentPower.getEpochTimestamp());
+                .getEffectiveFeedInTariff(dayOfWeek, localTime, currentPower.getEpochTimestamp());
         if (effectiveFeedInTariff == null) {
             logger.warn("No effective feed-in tariff found; unable to calculate power cost.");
             return;
@@ -97,7 +97,7 @@ public class PowerCostCalculator {
         BigDecimal feedInTariffWattSecond = convertTariffToWattSeconds(effectiveFeedInTariff);
         // Get usage tariff
         Tariff effectiveUsageTariff = tariffRepository
-                .findEffectiveUsageTariff(dayOfWeek, localTime, currentPower.getEpochTimestamp());
+                .getEffectiveUsageTariff(dayOfWeek, localTime, currentPower.getEpochTimestamp());
         if (effectiveUsageTariff == null) {
             logger.warn("No effective usage tariff found; unable to calculate power cost.");
             return;

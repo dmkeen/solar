@@ -1,6 +1,6 @@
 package org.keen.solar.system.fronius;
 
-import org.keen.solar.system.dal.CurrentPowerRepository;
+import org.keen.solar.system.dal.CurrentPowerDao;
 import org.keen.solar.system.domain.CurrentPower;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -16,7 +16,7 @@ public class CurrentPowerPersister {
     private CurrentPowerRetriever retriever;
 
     @Autowired
-    private CurrentPowerRepository repository;
+    private CurrentPowerDao repository;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;

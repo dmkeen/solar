@@ -2,7 +2,7 @@ package org.keen.solar.solcast.forecast;
 
 import org.junit.jupiter.api.Test;
 import org.keen.solar.system.fronius.CurrentPowerConfiguration;
-import org.keen.solar.solcast.forecast.dal.ForecastRepository;
+import org.keen.solar.solcast.forecast.dal.ForecastDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,7 +33,7 @@ public class ForecastPersisterIT {
     private ForecastPersister persister;
 
     @Autowired
-    private ForecastRepository repository;
+    private ForecastDao repository;
 
     @Test
     public void givenSolcastAPIAndDatabaseOnline_whenRetrieveAndPersist_thenForecastIsPersisted() {

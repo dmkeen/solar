@@ -4,7 +4,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keen.solar.config.TestConfiguration;
-import org.keen.solar.system.dal.CurrentPowerRepository;
+import org.keen.solar.system.dal.CurrentPowerDao;
 import org.keen.solar.system.domain.CurrentPower;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class MeasurementUploaderMockIT {
 
     @MockitoBean
-    private CurrentPowerRepository currentPowerRepository;
+    private CurrentPowerDao currentPowerRepository;
 
     @Autowired
     private MeasurementUploader measurementUploader;
@@ -70,7 +70,7 @@ public class MeasurementUploaderMockIT {
         Instant now = Instant.now().minus(10, ChronoUnit.MINUTES);
         long inverterEpochTimestamp = now.toEpochMilli() / 1000;
         currentPowerList.add(new CurrentPower(inverterEpochTimestamp, generationWatts, 0D, false));
-        when(currentPowerRepository.findByUploaded(false)).thenReturn(currentPowerList);
+        when(currentPowerRepository.getNotUploaded()).thenReturn(currentPowerList);
 
         RestTemplate restTemplate = restTemplateBuilder.build();
         MockRestServiceServer restServiceServer = MockRestServiceServer.bindTo(restTemplate).build();
@@ -99,7 +99,7 @@ public class MeasurementUploaderMockIT {
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<CurrentPower>> argumentCaptor = ArgumentCaptor.forClass(List.class);
-        verify(currentPowerRepository).saveAll(argumentCaptor.capture());
+        verify(currentPowerRepository).save(argumentCaptor.capture());
         List<CurrentPower> captorValue = argumentCaptor.getValue();
         Assert.notEmpty(captorValue, "Expected non-empty list to be saved");
         CurrentPower currentPower = captorValue.get(0);
@@ -117,7 +117,7 @@ public class MeasurementUploaderMockIT {
         Instant nowPlus5Mins = now.plus(5, ChronoUnit.MINUTES);
         long inverterEpochTimestampPlus5Mins = nowPlus5Mins.toEpochMilli() / 1000;
         currentPowerList.add(new CurrentPower(inverterEpochTimestampPlus5Mins, generationWatts, 0D, false));
-        when(currentPowerRepository.findByUploaded(false)).thenReturn(currentPowerList);
+        when(currentPowerRepository.getNotUploaded()).thenReturn(currentPowerList);
 
         RestTemplate restTemplate = restTemplateBuilder.build();
         MockRestServiceServer restServiceServer = MockRestServiceServer.bindTo(restTemplate).build();
@@ -153,7 +153,7 @@ public class MeasurementUploaderMockIT {
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<CurrentPower>> argumentCaptor = ArgumentCaptor.forClass(List.class);
-        verify(currentPowerRepository, times(2)).saveAll(argumentCaptor.capture());
+        verify(currentPowerRepository, times(2)).save(argumentCaptor.capture());
         List<CurrentPower> captorValue = argumentCaptor.getAllValues().stream().flatMap(List::stream).toList();
         Assert.notEmpty(captorValue, "Expected non-empty list to be saved");
         Assert.state(captorValue.size() == 2, "Expected 2 CurrentPowers to be saved");
