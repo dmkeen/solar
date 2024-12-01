@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class CurrentPowerDaoSpringDataImpl implements CurrentPowerDao {
+class CurrentPowerDaoSpringDataImpl implements CurrentPowerDao {
 
     private final CurrentPowerRepository repository;
 

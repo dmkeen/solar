@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface CurrentPowerRepository extends CrudRepository<CurrentPower, Long> {
+interface CurrentPowerRepository extends CrudRepository<CurrentPower, Long> {
 
     List<CurrentPower> findByUploaded(boolean uploaded);
 
