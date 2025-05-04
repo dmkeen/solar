@@ -14,7 +14,7 @@ Configure solar panel system in Solcast
 Setup and run the app:
 * Build the application using Maven: `mvn clean package`
 * Install and run MySQL (https://www.mysql.com/ or https://mariadb.org/)
-* Setup the database using `/src/main/resources/mysql/setup.sql` (substitute your own passwords)
+* Setup the database using `/solar-sql/src/main/resources/mysql/setup.sql` (substitute your own passwords)
 * Add power tariffs (see below for details)
 * Configure properties in `application.properties`
   * `app.inverter.host` - hostname/IP of the inverter web API
@@ -27,7 +27,7 @@ Setup and run the app:
 To view the output, use Grafana:
 * Install and run Grafana
 * Configure the MySQL datasource
-* Import the Solar dashboard found in `/src/main/resources/grafana/Solar.json`
+* Import the Solar dashboard found in `/solar-core/src/main/resources/grafana/Solar.json`
 
 Sample output:
 ![Grafana dashboard](grafana-dashboard-hd.webp)
