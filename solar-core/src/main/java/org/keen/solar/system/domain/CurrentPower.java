@@ -1,14 +1,10 @@
 package org.keen.solar.system.domain;
 
-import org.springframework.data.annotation.Id;
-
 /**
  * Represents the power generation and usage at a point in time
  */
 public class CurrentPower {
 
-    @Id
-    private Long id;
     /**
      * Measurement time in number of seconds since the epoch. Note that this
      * could be the time as given by the inverter or by the running application.
@@ -35,10 +31,6 @@ public class CurrentPower {
         this.uploaded = uploaded;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public long getEpochTimestamp() {
         return epochTimestamp;
     }
@@ -62,8 +54,7 @@ public class CurrentPower {
     @Override
     public String toString() {
         return "CurrentPower{" +
-                "id=" + id +
-                ", epochTimestamp=" + epochTimestamp +
+                "epochTimestamp=" + epochTimestamp +
                 ", generation=" + generation +
                 ", consumption=" + consumption +
                 ", uploaded=" + uploaded +

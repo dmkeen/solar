@@ -46,10 +46,10 @@ public class ForecastsDeserializerTest {
         double pvEstimate = 1.9614;
         double pvEstimate10 = 1.3395;
         double pvEstimate90 = 2.6258;
-        Assertions.assertEquals(periodEndEpoch, forecast.getPeriod_end_epoch(), String.format("Expected period end epoch to be %s but was %s", periodEndEpoch, forecast.getPeriod_end_epoch()));
-        Assertions.assertEquals(duration, forecast.getPeriod_length_seconds(), String.format("Expected duration to be %s but was %s", duration, forecast.getPeriod_length_seconds()));
-        Assertions.assertEquals(pvEstimate, forecast.getPv_estimate(), 0.0001, String.format("Expected pv estimate of %s but was %s", pvEstimate, forecast.getPv_estimate()));
-        Assertions.assertEquals(pvEstimate10, forecast.getPv_estimate10(), 0.0001, String.format("Expected pv estimate 10 of %s but was %s", pvEstimate10, forecast.getPv_estimate10()));
-        Assertions.assertEquals(pvEstimate90, forecast.getPv_estimate90(), 0.0001, String.format("Expected pv estimate 90 of %s but was %s", pvEstimate90, forecast.getPv_estimate90()));
+        Assertions.assertEquals(periodEndEpoch, forecast.period_end_epoch(), String.format("Expected period end epoch to be %s but was %s", periodEndEpoch, forecast.period_end_epoch()));
+        Assertions.assertEquals(duration, forecast.period_length_seconds(), String.format("Expected duration to be %s but was %s", duration, forecast.period_length_seconds()));
+        Assertions.assertEquals(pvEstimate, forecast.pv_estimate(), 0.0001, String.format("Expected pv estimate of %s but was %s", pvEstimate, forecast.pv_estimate()));
+        Assertions.assertEquals(pvEstimate10, forecast.pv_estimate10(), 0.0001, String.format("Expected pv estimate 10 of %s but was %s", pvEstimate10, forecast.pv_estimate10()));
+        Assertions.assertEquals(pvEstimate90, forecast.pv_estimate90(), 0.0001, String.format("Expected pv estimate 90 of %s but was %s", pvEstimate90, forecast.pv_estimate90()));
     }
 }

@@ -53,14 +53,14 @@ public class PowerCostCalculatorTest {
         List<PowerCost> powerCost = argumentCaptor.getAllValues();
         PowerCost powerCost1 = powerCost.get(0);
         Assertions.assertEquals(BigDecimal.valueOf(59021529L, 12),
-                powerCost1.getCost().setScale(12, RoundingMode.HALF_UP));
-        Assertions.assertEquals(1730493120, powerCost1.getPeriodEndEpoch());
-        Assertions.assertEquals(collectionFrequencySeconds, powerCost1.getPeriodLengthSeconds());
+                powerCost1.cost().setScale(12, RoundingMode.HALF_UP));
+        Assertions.assertEquals(1730493120, powerCost1.periodEndEpoch());
+        Assertions.assertEquals(collectionFrequencySeconds, powerCost1.periodLengthSeconds());
         PowerCost powerCost2 = powerCost.get(1);
         Assertions.assertEquals(BigDecimal.valueOf(-95571392L, 12),
-                powerCost2.getCost().setScale(12, RoundingMode.HALF_UP));
-        Assertions.assertEquals(1730493180, powerCost2.getPeriodEndEpoch());
-        Assertions.assertEquals(collectionFrequencySeconds, powerCost2.getPeriodLengthSeconds());
+                powerCost2.cost().setScale(12, RoundingMode.HALF_UP));
+        Assertions.assertEquals(1730493180, powerCost2.periodEndEpoch());
+        Assertions.assertEquals(collectionFrequencySeconds, powerCost2.periodLengthSeconds());
     }
 
     public static List<CurrentPower> getCurrentPowers() throws IOException {

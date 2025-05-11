@@ -44,7 +44,7 @@ public class StringPowerRetriever {
         OffsetDateTime thirtyOneMinutesAgo = now.minusMinutes(31);
         StringPowers stringPowers = retrieve(thirtyOneMinutesAgo, now);
         Optional<StringPower> latestStringPower = stringPowers.getStringPowerList()
-                .stream().max(Comparator.comparing(StringPower::getPeriodEndEpoch));
+                .stream().max(Comparator.comparing(StringPower::periodEndEpoch));
         if (latestStringPower.isPresent()) {
             return latestStringPower.get();
         }

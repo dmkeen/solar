@@ -156,7 +156,7 @@ public class PowerCostCalculator {
      * @return converted tariff
      */
     private BigDecimal convertTariffToWattSeconds(Tariff tariff) {
-        return tariff.getPricePerKwh()
+        return tariff.pricePerKwh()
                 .divide(WATTS_PER_KILOWATT, KILOWATT_T0_WATT_CONVERSION_SCALE, RoundingMode.HALF_UP)
                 .divide(SECONDS_PER_HOUR, HOUR_TO_SECOND_CONVERSION_SCALE, RoundingMode.HALF_UP);
     }

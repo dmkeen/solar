@@ -13,7 +13,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -37,8 +36,8 @@ public class StringPowerRetrieverIT {
         Assertions.assertNotNull(stringPowerList);
         Assertions.assertFalse(stringPowerList.isEmpty());
 
-        Collections.sort(stringPowerList, Comparator.comparing(StringPower::getPeriodEndEpoch));
-        Assertions.assertEquals(OffsetDateTime.now().truncatedTo(ChronoUnit.DAYS).toEpochSecond(), stringPowerList.get(0).getPeriodEndEpoch());
+        stringPowerList.sort(Comparator.comparing(StringPower::periodEndEpoch));
+        Assertions.assertEquals(OffsetDateTime.now().truncatedTo(ChronoUnit.DAYS).toEpochSecond(), stringPowerList.getFirst().periodEndEpoch());
 
         System.out.println(stringPowerList);
     }
@@ -48,7 +47,7 @@ public class StringPowerRetrieverIT {
         StringPower stringPower = retriever.getLatest();
 
         Assertions.assertNotNull(stringPower);
-        Assertions.assertTrue(stringPower.getPeriodEndEpoch() > OffsetDateTime.now().minusMinutes(6).toEpochSecond());
+        Assertions.assertTrue(stringPower.periodEndEpoch() > OffsetDateTime.now().minusMinutes(6).toEpochSecond());
 
         System.out.println(stringPower);
     }

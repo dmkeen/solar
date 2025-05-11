@@ -40,10 +40,10 @@ public class ForecastRetrieverTest {
         // Then
         Assert.notEmpty(forecasts, "Expected forecasts to be returned");
         Assert.state(forecasts.size() == 336, "Expected 336 forecasts but found " + forecasts.size());
-        Assert.state(forecasts.get(0).getPeriod_length_seconds() > 0, "Expected period length to be populated");
-        Assert.state(forecasts.get(0).getPeriod_end_epoch() > 0, "Expected period end epoch to be populated");
-        Assert.state(forecasts.get(0).getPv_estimate() > 0, "Expected pv estimate to be populated");
-        Assert.state(forecasts.get(0).getPv_estimate10() > 0, "Expected pv estimate 10 to be populated");
-        Assert.state(forecasts.get(0).getPv_estimate90() > 0, "Expected pv estimate 90 to be populated");
+        Assert.state(forecasts.get(0).period_length_seconds() > 0, "Expected period length to be populated");
+        Assert.state(forecasts.get(0).period_end_epoch() > 0, "Expected period end epoch to be populated");
+        Assert.state(forecasts.get(0).pv_estimate() > 0, "Expected pv estimate to be populated");
+        Assert.state(forecasts.get(0).pv_estimate10() > 0, "Expected pv estimate 10 to be populated");
+        Assert.state(forecasts.get(0).pv_estimate90() > 0, "Expected pv estimate 90 to be populated");
     }
 }
