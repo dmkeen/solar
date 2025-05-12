@@ -16,11 +16,12 @@ import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.List;
 
 @SpringBootTest
 @Sql(scripts = "/schema-h2.sql")
 @Transactional
-public class TariffDaoJdbcClientImplIT {
+class TariffDaoJdbcClientImplIT {
 
     private TariffDaoJdbcClientImpl tariffDao;
 
@@ -30,7 +31,7 @@ public class TariffDaoJdbcClientImplIT {
     private DataSource dataSource;
 
     @BeforeEach
-    public void populateRepository() {
+    void populateRepository() {
         jdbcClient = JdbcClient.create(dataSource);
         tariffDao = new TariffDaoJdbcClientImpl(jdbcClient);
 
@@ -98,7 +99,7 @@ public class TariffDaoJdbcClientImplIT {
 
     @ParameterizedTest
     @CsvSource({"SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"})
-    public void givenTariffWithNoEndDate_whenFindEffectiveFeedInTariff_thenTariffRetrievedCorrectly(DayOfWeek dayOfWeek) {
+    void givenTariffWithNoEndDate_whenFindEffectiveFeedInTariff_thenTariffRetrievedCorrectly(DayOfWeek dayOfWeek) {
         Tariff effectiveTariff = tariffDao.getEffectiveFeedInTariff(dayOfWeek, LocalTime.of(11, 45), 1730594700);
 
         Assertions.assertNotNull(effectiveTariff);
@@ -113,7 +114,7 @@ public class TariffDaoJdbcClientImplIT {
 
     @ParameterizedTest
     @CsvSource({"SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"})
-    public void givenTariffWithEndDate_whenFindEffectiveFeedInTariff_thenTariffRetrievedCorrectly(DayOfWeek dayOfWeek) {
+    void givenTariffWithEndDate_whenFindEffectiveFeedInTariff_thenTariffRetrievedCorrectly(DayOfWeek dayOfWeek) {
         Tariff effectiveTariff = tariffDao.getEffectiveFeedInTariff(dayOfWeek, LocalTime.of(11, 45), 1730279600);
 
         Assertions.assertNotNull(effectiveTariff);
@@ -127,7 +128,7 @@ public class TariffDaoJdbcClientImplIT {
     }
 
     @Test
-    public void givenMultipleTariffsPerDay_whenFindEffectiveFeedInTariff_thenTariffRetrievedCorrectly() {
+    void givenMultipleTariffsPerDay_whenFindEffectiveFeedInTariff_thenTariffRetrievedCorrectly() {
         Tariff midnightTariff = tariffDao.getEffectiveFeedInTariff(DayOfWeek.SUNDAY, LocalTime.of(0, 0), 1708174800);
         Tariff nineFiftyNineTariff = tariffDao.getEffectiveFeedInTariff(DayOfWeek.SUNDAY, LocalTime.of(9, 59), 1708210740);
         Tariff tenTariff = tariffDao.getEffectiveFeedInTariff(DayOfWeek.SUNDAY, LocalTime.of(10, 0), 1708210800);
@@ -145,7 +146,7 @@ public class TariffDaoJdbcClientImplIT {
 
     @ParameterizedTest
     @CsvSource({"SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"})
-    public void givenTariffWithNoEndDate_whenFindEffectiveUsageTariff_thenTariffRetrievedCorrectly(DayOfWeek dayOfWeek) {
+    void givenTariffWithNoEndDate_whenFindEffectiveUsageTariff_thenTariffRetrievedCorrectly(DayOfWeek dayOfWeek) {
         Tariff effectiveTariff = tariffDao.getEffectiveUsageTariff(dayOfWeek, LocalTime.of(11, 45), 1730594700);
 
         Assertions.assertNotNull(effectiveTariff);
@@ -160,7 +161,7 @@ public class TariffDaoJdbcClientImplIT {
 
     @ParameterizedTest
     @CsvSource({"SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"})
-    public void givenTariffWithEndDate_whenFindEffectiveUsageTariff_thenTariffRetrievedCorrectly(DayOfWeek dayOfWeek) {
+    void givenTariffWithEndDate_whenFindEffectiveUsageTariff_thenTariffRetrievedCorrectly(DayOfWeek dayOfWeek) {
         Tariff effectiveTariff = tariffDao.getEffectiveUsageTariff(dayOfWeek, LocalTime.of(11, 45), 1730279600);
 
         Assertions.assertNotNull(effectiveTariff);
@@ -174,7 +175,7 @@ public class TariffDaoJdbcClientImplIT {
     }
 
     @Test
-    public void givenMultipleTariffsPerDay_whenFindEffectiveUsageTariff_thenTariffRetrievedCorrectly() {
+    void givenMultipleTariffsPerDay_whenFindEffectiveUsageTariff_thenTariffRetrievedCorrectly() {
         Tariff midnightTariff = tariffDao.getEffectiveUsageTariff(DayOfWeek.SUNDAY, LocalTime.of(0, 0), 1708174800);
         Tariff nineFiftyNineTariff = tariffDao.getEffectiveUsageTariff(DayOfWeek.SUNDAY, LocalTime.of(14, 59), 1708210740);
         Tariff tenTariff = tariffDao.getEffectiveUsageTariff(DayOfWeek.SUNDAY, LocalTime.of(15, 0), 1708210800);
@@ -189,4 +190,40 @@ public class TariffDaoJdbcClientImplIT {
         Assertions.assertEquals(BigDecimal.valueOf(2174, 4), fourteenTariff.pricePerKwh());
         Assertions.assertEquals(BigDecimal.valueOf(2174, 4), twentyThreeFiftyNineTariff.pricePerKwh());
     }
+
+    @Test
+    void givenNewTariff_whenApplyTariffs_thenTariffIsInserted() {
+        // Given: A new tariff that does not exist in the database
+        Tariff newTariff = new Tariff(
+                false,
+                1731196800L,
+                null,
+                DayOfWeek.SUNDAY,
+                LocalTime.of(0, 0),
+                LocalTime.of(23, 59, 59),
+                new BigDecimal("0.25")
+        );
+
+        // When: The tariff is applied
+        tariffDao.applyTariffs(List.of(newTariff), List.of());
+
+        // Then: The tariff is inserted into the database
+        List<Tariff> tariffs = jdbcClient.sql("SELECT * FROM tariff WHERE feed_in = false " +
+                        "AND day_of_week = 'SUNDAY' AND start_effective_date_epoch = 1731196800")
+                .query((rs, rowNum) -> new Tariff(
+                        rs.getBoolean("feed_in"),
+                        rs.getLong("start_effective_date_epoch"),
+                        rs.getObject("end_effective_date_epoch", Long.class),
+                        DayOfWeek.valueOf(rs.getString("day_of_week")),
+                        rs.getTime("start_of_period").toLocalTime(),
+                        rs.getTime("end_of_period").toLocalTime(),
+                        rs.getBigDecimal("price_per_kwh")
+                )).list();
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(1, tariffs.size(), "Expected one tariff to be inserted"),
+                () -> Assertions.assertEquals(newTariff, tariffs.getFirst(), "Inserted tariff does not match the expected tariff")
+        );
+    }
+
 }

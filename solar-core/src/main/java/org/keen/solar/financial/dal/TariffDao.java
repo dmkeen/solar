@@ -4,6 +4,7 @@ import org.keen.solar.financial.domain.Tariff;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.List;
 
 public interface TariffDao {
 
@@ -28,4 +29,14 @@ public interface TariffDao {
      * @return the usage tariff
      */
     Tariff getEffectiveUsageTariff(DayOfWeek dayOfWeek, LocalTime localTime, long epochTime);
+
+    /**
+     * Applies the given lists of usage tariffs and feed-in tariffs by:
+     * - Expiring existing tariffs one second prior to the new tariffs' start date.
+     * - Inserting the new tariffs into the data store.
+     *
+     * @param usageTariffs   the list of usage tariffs to apply
+     * @param feedInTariffs  the list of feed-in tariffs to apply
+     */
+    void applyTariffs(List<Tariff> usageTariffs, List<Tariff> feedInTariffs);
 }

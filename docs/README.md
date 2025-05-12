@@ -34,36 +34,64 @@ Sample output:
 
 ## Power tariff configuration
 There are two types of tariffs:
-* Usage - what you are charged for using electricity
-* Feed-in - what you are paid (or possibly charged) for exporting electricity
+* **Usage tariffs** - what you are charged for using electricity.
+* **Feed-in tariffs** - what you are paid (or possibly charged) for exporting electricity.
 
-**Both tariffs must be configured for each day of the week, from 00:00 to 23:59:59.**
+### Tariff Data Structure
+The application uses the `Tariff` data structure to represent power tariffs. The fields in the `Tariff` class are:
 
-The tariff table structure is:
+| Field                     | Type         | Description                                                                                     |
+|---------------------------|--------------|-------------------------------------------------------------------------------------------------|
+| `feedIn`                  | `boolean`    | `true` for a feed-in tariff, `false` for a usage tariff.                                        |
+| `startEffectiveDateEpoch` | `long`       | The time when this tariff begins to be effective, in seconds since the epoch or as a date string. |
+| `endEffectiveDateEpoch`   | `Long`       | The time when this tariff stops being effective, in seconds since the epoch. Can be `null`.     |
+| `dayOfWeek`               | `DayOfWeek`  | The day of the week this tariff applies to (e.g., `SUNDAY`, `MONDAY`).                         |
+| `startOfPeriod`           | `LocalTime`  | The time of day when this tariff starts being effective (e.g., `00:00:00`, `15:00:00`).         |
+| `endOfPeriod`             | `LocalTime`  | The time of day when this tariff stops being effective (e.g., `10:00:00`, `23:59:59`).          |
+| `pricePerKwh`             | `BigDecimal` | The price for one kilowatt-hour (kWh) (e.g., `0.2174`).                                         |
 
-| Column | Type    | Description                                                                                                                                    |
-|--------|---------|------------------------------------------------------------------------------------------------------------------------------------------------|
-| feed_in | boolean | `FALSE` for a usage tariff, `TRUE` for a feed-in tariff                                                                                        |
-| start_effective_date_epoch | bigint | The time when this tariff begins to be effective, in seconds since the epoch                                                                   |
-| end_effective_date_epoch | bigint | The time when this tariff stops being effective, in seconds since the epoch. Can be null.                                                      |
-| day_of_week | varchar(9) | The day of the week, in capitals. For example SUNDAY.                                                                                          |
-| start_of_period | time | The time of day when this tariff starts being effective. For example, 00:00 or 15:00.                                                          |
-| end_of_period | time | The time of day when this tariff stops being effective. For example 10:00 or 15:00. Ensure that the last period for each day ends at 23:59:59. |
-| price_per_kwh | numeric(5,4) | The price for one kilowatt-hour (kWh). For example, 0.2174.                                                                                    |
+### Loading Tariffs
+To load tariffs into the application, follow these steps:
 
-The following examples use Sunday, 10 November 2024 GMT (epoch time 1731196800) as the starting effective date for the tariff.
-### Flat tariff example
-If you are paid \$0.033 per kWh for export, regardless of the time of day, then the insert
-statement for Sunday would look like:
-`INSERT INTO tariff (feed_in, start_effective_date_epoch, day_of_week, start_of_period, end_of_period, price_per_kwh) VALUES (TRUE,1731196800,'SUNDAY','00:00','23:59:59',0.033);`
+1. **Create a CSV File**:
+   Create a CSV file containing the tariff data. The file must include both usage and feed-in tariffs for each day of the week, covering the entire day from `00:00:00` to `23:59:59`.
 
-### Time-of-use tariff example
-If you are charged different amounts depending on the time of day, then you will have
-multiple rows per day.
+   Example CSV file:
+   ```csv
+   feedIn,startEffectiveDateEpoch,endEffectiveDateEpoch,dayOfWeek,startOfPeriod,endOfPeriod,pricePerKwh
+   true,2024-11-10 00:00:00,,SUNDAY,00:00:00,23:59:59,0.033
+   false,2024-11-10 00:00:00,,SUNDAY,00:00:00,15:00:00,0.2174
+   false,2024-11-10 00:00:00,,SUNDAY,15:00:00,21:00:00,0.4082
+   false,2024-11-10 00:00:00,,SUNDAY,21:00:00,23:59:59,0.2174
+   ```
 
-If you are charged \$0.2174 between midnight and 3pm, \$0.4082 between 3pm and 9pm and
-\$0.2174 between 9pm and midnight, the insert statements for Sunday would look like:
+2. **Configure the Application**:
+   Update the `application.properties` file to point to the CSV file:
+   ```properties
+   app.tariff.file-path=/path/to/tariff-file.csv
+   app.tariff.date-format=yyyy-MM-dd HH:mm:ss
+   app.tariff.timezone=Australia/Melbourne
+   ```
 
-`INSERT INTO tariff (feed_in, start_effective_date_epoch, day_of_week, start_of_period, end_of_period, price_per_kwh) VALUES (FALSE,1731196800,'SUNDAY','00:00','15:00',0.2174);
-INSERT INTO tariff (feed_in, start_effective_date_epoch, day_of_week, start_of_period, end_of_period, price_per_kwh) VALUES (FALSE,1731196800,'SUNDAY','15:00','21:00',0.4082);
-INSERT INTO tariff (feed_in, start_effective_date_epoch, day_of_week, start_of_period, end_of_period, price_per_kwh) VALUES (FALSE,1731196800,'SUNDAY','21:00','23:59:59',0.2174);`
+3. **Trigger the Update**:
+   Call the `/update-tariffs` endpoint to load the tariffs into the application. This endpoint validates the tariffs and applies them to the database.
+
+### Examples
+#### Flat Tariff Example
+If you are paid $0.033 per kWh for export, regardless of the time of day, the CSV entry for Sunday would look like:
+```csv
+true,2024-11-10 00:00:00,,SUNDAY,00:00:00,23:59:59,0.033
+```
+
+#### Time-of-Use Tariff Example
+If you are charged different amounts depending on the time of day, you will have multiple rows per day. For example:
+- $0.2174 between midnight and 3pm,
+- $0.4082 between 3pm and 9pm,
+- $0.2174 between 9pm and midnight.
+
+The CSV entries for Sunday would look like:
+```csv
+false,2024-11-10 00:00:00,,SUNDAY,00:00:00,15:00:00,0.2174
+false,2024-11-10 00:00:00,,SUNDAY,15:00:00,21:00:00,0.4082
+false,2024-11-10 00:00:00,,SUNDAY,21:00:00,23:59:59,0.2174
+```
