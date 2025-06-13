@@ -89,24 +89,26 @@ public class TariffDaoJdbcClientImpl implements TariffDao {
         for (Tariff tariff : allTariffs) {
             // Expire existing tariffs
             int updatedRows = jdbcClient.sql("""
-                    UPDATE tariff
-                    SET end_effective_date_epoch = :endEffectiveDateEpoch
-                    WHERE feed_in = :feedIn
-                      AND day_of_week = :dayOfWeek
-                      AND (end_effective_date_epoch IS NULL OR end_effective_date_epoch > :startEffectiveDateEpoch)
-                """)
-                .param("endEffectiveDateEpoch", tariff.startEffectiveDateEpoch() - 1)
-                .param("feedIn", tariff.feedIn())
-                .param("dayOfWeek", tariff.dayOfWeek().toString())
-                .param("startEffectiveDateEpoch", tariff.startEffectiveDateEpoch())
-                .update();
+                                UPDATE tariff
+                                SET end_effective_date_epoch = :endEffectiveDateEpoch
+                                WHERE feed_in = :feedIn
+                                  AND day_of_week = :dayOfWeek
+                                  AND (end_effective_date_epoch IS NULL OR end_effective_date_epoch > :startEffectiveDateEpoch)
+                            """)
+                    .param("endEffectiveDateEpoch", tariff.startEffectiveDateEpoch() - 1)
+                    .param("feedIn", tariff.feedIn())
+                    .param("dayOfWeek", tariff.dayOfWeek().toString())
+                    .param("startEffectiveDateEpoch", tariff.startEffectiveDateEpoch())
+                    .update();
 
             if (updatedRows > 0) {
                 logger.info("Updated {} existing tariffs for feedIn={}, dayOfWeek={}, startEffectiveDateEpoch={}",
                         updatedRows, tariff.feedIn(), tariff.dayOfWeek(), tariff.startEffectiveDateEpoch());
             }
+        }
 
-            // Insert new tariff
+        for (Tariff tariff : allTariffs) {
+            // Insert new tariffs
             jdbcClient.sql("""
                     INSERT INTO tariff (feed_in, start_effective_date_epoch, end_effective_date_epoch, day_of_week, start_of_period, end_of_period, price_per_kwh)
                     VALUES (:feedIn, :startEffectiveDateEpoch, :endEffectiveDateEpoch, :dayOfWeek, :startOfPeriod, :endOfPeriod, :pricePerKwh)

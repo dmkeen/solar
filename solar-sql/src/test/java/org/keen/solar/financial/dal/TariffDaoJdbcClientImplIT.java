@@ -71,13 +71,20 @@ class TariffDaoJdbcClientImplIT {
         insertTariff(false, 1717164000, 1730379600L, "FRIDAY", "00:00:00", "23:59:00", BigDecimal.valueOf(3485, 4));
         insertTariff(false, 1717164000, 1730379600L, "SATURDAY", "00:00:00", "23:59:00", BigDecimal.valueOf(3485, 4));
 
-        insertTariff(false, 1730379600, null, "SUNDAY", "00:00:00", "23:59:00", BigDecimal.valueOf(3974, 4));
-        insertTariff(false, 1730379600, null, "MONDAY", "00:00:00", "23:59:00", BigDecimal.valueOf(3974, 4));
-        insertTariff(false, 1730379600, null, "TUESDAY", "00:00:00", "23:59:00", BigDecimal.valueOf(3974, 4));
-        insertTariff(false, 1730379600, null, "WEDNESDAY", "00:00:00", "23:59:00", BigDecimal.valueOf(3974, 4));
-        insertTariff(false, 1730379600, null, "THURSDAY", "00:00:00", "23:59:00", BigDecimal.valueOf(3974, 4));
-        insertTariff(false, 1730379600, null, "FRIDAY", "00:00:00", "23:59:00", BigDecimal.valueOf(3974, 4));
-        insertTariff(false, 1730379600, null, "SATURDAY", "00:00:00", "23:59:00", BigDecimal.valueOf(3974, 4));
+        insertTariff(false, 1730379600, null, "SUNDAY", "00:00:00", "15:00:00", BigDecimal.valueOf(3974, 4));
+        insertTariff(false, 1730379600, null, "SUNDAY", "15:00:00", "23:59:00", BigDecimal.valueOf(3074, 4));
+        insertTariff(false, 1730379600, null, "MONDAY", "00:00:00", "15:00:00", BigDecimal.valueOf(3974, 4));
+        insertTariff(false, 1730379600, null, "MONDAY", "15:00:00", "23:59:00", BigDecimal.valueOf(3074, 4));
+        insertTariff(false, 1730379600, null, "TUESDAY", "00:00:00", "15:00:00", BigDecimal.valueOf(3974, 4));
+        insertTariff(false, 1730379600, null, "TUESDAY", "15:00:00", "23:59:00", BigDecimal.valueOf(3074, 4));
+        insertTariff(false, 1730379600, null, "WEDNESDAY", "00:00:00", "15:00:00", BigDecimal.valueOf(3974, 4));
+        insertTariff(false, 1730379600, null, "WEDNESDAY", "15:00:00", "23:59:00", BigDecimal.valueOf(3074, 4));
+        insertTariff(false, 1730379600, null, "THURSDAY", "00:00:00", "15:00:00", BigDecimal.valueOf(3974, 4));
+        insertTariff(false, 1730379600, null, "THURSDAY", "15:00:00", "23:59:00", BigDecimal.valueOf(3074, 4));
+        insertTariff(false, 1730379600, null, "FRIDAY", "00:00:00", "15:00:00", BigDecimal.valueOf(3974, 4));
+        insertTariff(false, 1730379600, null, "FRIDAY", "15:00:00", "23:59:00", BigDecimal.valueOf(3074, 4));
+        insertTariff(false, 1730379600, null, "SATURDAY", "00:00:00", "15:00:00", BigDecimal.valueOf(3974, 4));
+        insertTariff(false, 1730379600, null, "SATURDAY", "15:00:00", "23:59:00", BigDecimal.valueOf(3074, 4));
     }
 
     private void insertTariff(boolean feedIn, long startEpoch, Long endEpoch, String dayOfWeek, String startTime, String endTime, BigDecimal pricePerKwh) {
@@ -156,7 +163,7 @@ class TariffDaoJdbcClientImplIT {
         Assertions.assertEquals(1730379600, effectiveTariff.startEffectiveDateEpoch());
         Assertions.assertNull(effectiveTariff.endEffectiveDateEpoch());
         Assertions.assertEquals(LocalTime.of(0, 0), effectiveTariff.startOfPeriod());
-        Assertions.assertEquals(LocalTime.of(23, 59), effectiveTariff.endOfPeriod());
+        Assertions.assertEquals(LocalTime.of(15, 0), effectiveTariff.endOfPeriod());
     }
 
     @ParameterizedTest
@@ -194,18 +201,27 @@ class TariffDaoJdbcClientImplIT {
     @Test
     void givenNewTariff_whenApplyTariffs_thenTariffIsInserted() {
         // Given: A new tariff that does not exist in the database
-        Tariff newTariff = new Tariff(
+        Tariff newTariff1 = new Tariff(
                 false,
                 1731196800L,
                 null,
                 DayOfWeek.SUNDAY,
                 LocalTime.of(0, 0),
-                LocalTime.of(23, 59, 59),
+                LocalTime.of(16, 0),
                 new BigDecimal("0.25")
+        );
+        Tariff newTariff2 = new Tariff(
+                false,
+                1731196800L,
+                null,
+                DayOfWeek.SUNDAY,
+                LocalTime.of(16, 0),
+                LocalTime.of(23, 59, 59),
+                new BigDecimal("0.27")
         );
 
         // When: The tariff is applied
-        tariffDao.applyTariffs(List.of(newTariff), List.of());
+        tariffDao.applyTariffs(List.of(newTariff1, newTariff2), List.of());
 
         // Then: The tariff is inserted into the database
         List<Tariff> tariffs = jdbcClient.sql("SELECT * FROM tariff WHERE feed_in = false " +
@@ -221,8 +237,9 @@ class TariffDaoJdbcClientImplIT {
                 )).list();
 
         Assertions.assertAll(
-                () -> Assertions.assertEquals(1, tariffs.size(), "Expected one tariff to be inserted"),
-                () -> Assertions.assertEquals(newTariff, tariffs.getFirst(), "Inserted tariff does not match the expected tariff")
+                () -> Assertions.assertEquals(2, tariffs.size(), "Expected two tariffs to be inserted"),
+                () -> Assertions.assertEquals(newTariff1, tariffs.getFirst(), "Inserted tariff does not match the expected tariff"),
+                () -> Assertions.assertEquals(newTariff2, tariffs.getLast(), "Inserted tariff does not match the expected tariff")
         );
     }
 
