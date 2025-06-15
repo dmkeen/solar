@@ -1,5 +1,6 @@
 package org.keen.solar.solcast.measurement;
 
+import org.keen.solar.solcast.measurement.dal.MeasurementDao;
 import org.keen.solar.system.dal.CurrentPowerDao;
 import org.keen.solar.system.domain.CurrentPower;
 import org.keen.solar.solcast.measurement.domain.Measurement;
@@ -28,7 +29,8 @@ public class MeasurementUploader {
     private final Logger logger = LoggerFactory.getLogger(MeasurementUploader.class);
 
     private final RestTemplate restTemplate;
-    private final CurrentPowerDao repository;
+    private final CurrentPowerDao currentPowerDao;
+    private final MeasurementDao measurementDao;
 
     @Value("${app.solcast.base-url}")
     private String solcastApiBaseUrl;
@@ -39,16 +41,19 @@ public class MeasurementUploader {
     @Value("${app.solcast.api-key}")
     private String solcastApiKey;
 
-    public MeasurementUploader(RestTemplateBuilder restTemplateBuilder, CurrentPowerDao repository) {
+    public MeasurementUploader(RestTemplateBuilder restTemplateBuilder, CurrentPowerDao currentPowerDao,
+                               MeasurementDao measurementDao) {
         this.restTemplate = restTemplateBuilder.build();
-        this.repository = repository;
+        this.currentPowerDao = currentPowerDao;
+        this.measurementDao = measurementDao;
     }
 
     /**
      * Uploads all measurements not yet uploaded to Solcast
      */
     public void uploadAll() {
-        List<CurrentPower> currentPowerNotUploaded = repository.getNotUploaded();
+        long lastUploadedEpochTimestamp = measurementDao.getLastUploadedEpochTimestamp();
+        List<CurrentPower> currentPowerNotUploaded = currentPowerDao.getStartingFrom(lastUploadedEpochTimestamp);
         doUpload(currentPowerNotUploaded);
     }
 
@@ -57,7 +62,7 @@ public class MeasurementUploader {
             logger.info("Nothing to upload");
             return;
         }
-        logger.debug(String.format("Converting list of %d CurrentPower to Measurement", currentPowerNotUploaded.size()));
+        logger.debug("Converting list of {} CurrentPower to Measurement", currentPowerNotUploaded.size());
         List<Measurement> measurementsToUpload = convertToMeasurements(currentPowerNotUploaded);
         // Remove any measurements with a period end in the future
         measurementsToUpload = measurementsToUpload.stream()
@@ -71,7 +76,8 @@ public class MeasurementUploader {
 
         String url = solcastApiBaseUrl + "/rooftop_sites/" + solcastSiteId + "/measurements";
         int numberOfMeasurements = measurementsToUpload.size();
-        logger.info("Uploading " + numberOfMeasurements + " solar generation measurement" + (numberOfMeasurements > 1 ? "s" : "") + " to " + url);
+        logger.info("Uploading {} solar generation measurement{} to {}", numberOfMeasurements,
+                numberOfMeasurements > 1 ? "s" : "", url);
 
         // Docs say a 400 is returned if a single measurement is posted and is invalid
         // If multiple measurements are posted, a 200 is returned along with the valid measurements
@@ -93,22 +99,19 @@ public class MeasurementUploader {
      * @param returnedMeasurements    list of Measurements successfully uploaded
      */
     private void updateRepository(List<Measurement> measurementsToUpload, List<Measurement> returnedMeasurements) {
-        // Only update repository for successfully uploaded measurements
-        List<Measurement> measurementsUploaded = new ArrayList<>(measurementsToUpload);
-        // Handle the case where no measurements are returned
-        if (returnedMeasurements == null) {
-            returnedMeasurements = new ArrayList<>();
+        Optional<Measurement> max = returnedMeasurements.stream()
+                .max(Comparator.comparing(Measurement::getPeriod_end));
+        if (max.isPresent()) {
+            // Update the last uploaded epoch timestamp in the repository
+            measurementDao.setLastUploadedEpochTimestamp(max.get().getPeriod_end().toEpochSecond());
+            logger.debug("Updated last uploaded epoch timestamp to {}", max.get().getPeriod_end().toEpochSecond());
+        } else {
+            logger.warn("No measurements were returned from the upload, cannot update last uploaded timestamp");
         }
-        measurementsUploaded.retainAll(returnedMeasurements);
-        logger.debug("Updating repository");
-        measurementsUploaded.forEach(measurement -> {
-            measurement.getSource().parallelStream().forEach(currentPower -> currentPower.setUploaded(true));
-            repository.save(measurement.getSource());
-        });
         // Log which measurements were in error
         measurementsToUpload.removeAll(returnedMeasurements);
         if (!measurementsToUpload.isEmpty()) {
-            logger.warn("The following measurements were not uploaded successfully: " + measurementsToUpload.toString());
+            logger.warn("The following measurements were not uploaded successfully: {}", measurementsToUpload);
         }
     }
 
@@ -120,7 +123,7 @@ public class MeasurementUploader {
      */
     private boolean handleErrors(ResponseEntity<MeasurementResponse> measurementResponse) {
         if (measurementResponse.getStatusCode().isError()) {
-            logger.error("Error response from measurements API: " + measurementResponse.getStatusCode());
+            logger.error("Error response from measurements API: {}", measurementResponse.getStatusCode());
             return true;
         }
         if (measurementResponse.getBody() == null) {
@@ -143,12 +146,12 @@ public class MeasurementUploader {
         int groupByMinutes = 5;
         int groupBySeconds = groupByMinutes * 60;
         Map<Long, List<CurrentPower>> currentPowerByPeriod = currentPowerList.stream()
-                .collect(Collectors.groupingBy(currentPower -> currentPower.getEpochTimestamp() / groupBySeconds));
+                .collect(Collectors.groupingBy(currentPower -> currentPower.epochTimestamp() / groupBySeconds));
         return currentPowerByPeriod.entrySet().stream().map(listEntry -> {
             List<CurrentPower> powerList = listEntry.getValue();
             // Calculate average power generated for this 5 minute period
             // Note that CurrentPower generation is in Watts while Measurement is in Kilowatts, hence we divide by 1000
-            double averageGeneration = powerList.stream().collect(Collectors.averagingDouble(CurrentPower::getGeneration)) / 1000;
+            double averageGeneration = powerList.stream().collect(Collectors.averagingDouble(CurrentPower::generation)) / 1000;
             // Create the Measurement for the *end* of the 5 minute period.
             // The key is first multiplied by groupBySeconds to get the epoch timestamp (because we divided by groupBySeconds above),
             // then we add groupBySeconds to get the end of the period.

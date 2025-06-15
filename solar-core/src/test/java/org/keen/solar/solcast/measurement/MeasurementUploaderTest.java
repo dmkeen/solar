@@ -28,7 +28,7 @@ public class MeasurementUploaderTest {
         // Then
         Assert.notEmpty(measurements, "Expected at least one Measurement");
         Assert.state(measurements.size() == 1, "Expected only one Measurement");
-        double expectedAverageGeneration = currentPowerList.stream().mapToDouble(CurrentPower::getGeneration).average().getAsDouble() / 1000;
+        double expectedAverageGeneration = currentPowerList.stream().mapToDouble(CurrentPower::generation).average().getAsDouble() / 1000;
 
         Measurement measurement = measurements.get(0);
         Assert.state(Math.abs(measurement.getTotal_power() - expectedAverageGeneration) < 0.01D,
@@ -50,7 +50,7 @@ public class MeasurementUploaderTest {
         for (int i = 1; i <= numberOfMeasurements; i++) {
             ArrayList<CurrentPower> tempList = generateCurrentPowerList(300, startTime.plus(5 * (i - 1), ChronoUnit.MINUTES));
             currentPowerList.addAll(tempList);
-            double expectedAverageGeneration = tempList.stream().mapToDouble(CurrentPower::getGeneration).average().getAsDouble() / 1000;
+            double expectedAverageGeneration = tempList.stream().mapToDouble(CurrentPower::generation).average().getAsDouble() / 1000;
             OffsetDateTime expectedPeriodEnd = startTime.plus(5 * i, ChronoUnit.MINUTES).atOffset(ZoneOffset.UTC);
             expectedMeasurements.add(new Measurement(expectedPeriodEnd, Duration.ofMinutes(5), expectedAverageGeneration, tempList));
         }
@@ -82,7 +82,7 @@ public class MeasurementUploaderTest {
         DoubleStream doubleStream = random.doubles(listLength, 0, 4000);
         doubleStream.forEach(value -> currentPowerQueue.add(new CurrentPower(
                 startTime.plusSeconds(atomicLong.getAndAdd(1)).toEpochMilli() / 1000,
-                value, 500D, false)));
+                value, 500D)));
         return new ArrayList<>(currentPowerQueue);
     }
 }

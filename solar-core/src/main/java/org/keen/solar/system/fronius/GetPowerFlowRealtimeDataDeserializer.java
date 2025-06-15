@@ -52,7 +52,7 @@ public class GetPowerFlowRealtimeDataDeserializer extends StdDeserializer<Curren
             timestamp = applicationTimestamp;
         }
 
-        return new CurrentPower(timestamp.toEpochSecond(), powerGeneration, powerConsumption, false);
+        return new CurrentPower(timestamp.toEpochSecond(), powerGeneration, powerConsumption);
     }
 
 }

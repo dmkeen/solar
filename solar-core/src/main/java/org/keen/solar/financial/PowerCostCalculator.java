@@ -64,7 +64,7 @@ public class PowerCostCalculator {
         uncostedPowers.add(currentPower);
 
         // If we've reached a boundary, sum and persist.
-        if (currentPower.getEpochTimestamp() % collectionFrequencySeconds == 0) {
+        if (currentPower.epochTimestamp() % collectionFrequencySeconds == 0) {
             calculateCostAndPersist(currentPower);
         }
     }
@@ -83,13 +83,13 @@ public class PowerCostCalculator {
      * @param currentPower the last CurrentPower to include in the calculation
      */
     private void calculateCostAndPersist(CurrentPower currentPower) {
-        logger.trace("Calculating power cost for period end {}", currentPower.getEpochTimestamp());
+        logger.trace("Calculating power cost for period end {}", currentPower.epochTimestamp());
         ZonedDateTime measurementZonedDateTime = getMeasurementZonedDateTime();
         DayOfWeek dayOfWeek = measurementZonedDateTime.getDayOfWeek();
         LocalTime localTime = measurementZonedDateTime.toLocalTime();
         // Get feed-in tariff
         Tariff effectiveFeedInTariff = tariffRepository
-                .getEffectiveFeedInTariff(dayOfWeek, localTime, currentPower.getEpochTimestamp());
+                .getEffectiveFeedInTariff(dayOfWeek, localTime, currentPower.epochTimestamp());
         if (effectiveFeedInTariff == null) {
             logger.warn("No effective feed-in tariff found; unable to calculate power cost.");
             return;
@@ -97,7 +97,7 @@ public class PowerCostCalculator {
         BigDecimal feedInTariffWattSecond = convertTariffToWattSeconds(effectiveFeedInTariff);
         // Get usage tariff
         Tariff effectiveUsageTariff = tariffRepository
-                .getEffectiveUsageTariff(dayOfWeek, localTime, currentPower.getEpochTimestamp());
+                .getEffectiveUsageTariff(dayOfWeek, localTime, currentPower.epochTimestamp());
         if (effectiveUsageTariff == null) {
             logger.warn("No effective usage tariff found; unable to calculate power cost.");
             return;
@@ -105,9 +105,9 @@ public class PowerCostCalculator {
         BigDecimal usageTariffWattSecond = convertTariffToWattSeconds(effectiveUsageTariff);
 
         BigDecimal costSum = calculateCost(currentPower, feedInTariffWattSecond, usageTariffWattSecond);
-        logger.debug("Cost for period end {}: {}", currentPower.getEpochTimestamp(), costSum);
+        logger.debug("Cost for period end {}: {}", currentPower.epochTimestamp(), costSum);
         PowerCost powerCost = new PowerCost(costSum,
-                currentPower.getEpochTimestamp(),
+                currentPower.epochTimestamp(),
                 collectionFrequencySeconds);
         powerCostRepository.save(powerCost);
     }
@@ -131,8 +131,8 @@ public class PowerCostCalculator {
             // Could happen if triggered on shutdown, and we haven't accumulated a full period
             if (cp == null)
                 break;
-            BigDecimal wattSecond = BigDecimal.valueOf(cp.getGeneration())
-                    .add(BigDecimal.valueOf(cp.getConsumption()));
+            BigDecimal wattSecond = BigDecimal.valueOf(cp.generation())
+                    .add(BigDecimal.valueOf(cp.consumption()));
             BigDecimal costPerSecond;
             if (wattSecond.compareTo(BigDecimal.ZERO) >= 0) {
                 // Positive value = feeding power to the grid
@@ -143,7 +143,7 @@ public class PowerCostCalculator {
             }
             costSum = costSum.add(costPerSecond);
 
-            if (cp.getEpochTimestamp() == currentPower.getEpochTimestamp())
+            if (cp.epochTimestamp() == currentPower.epochTimestamp())
                 break;
         }
         return costSum.negate();
@@ -169,7 +169,7 @@ public class PowerCostCalculator {
     private ZonedDateTime getMeasurementZonedDateTime() {
         CurrentPower firstPower = uncostedPowers.peek();
         // firstPower will not be null since we always add before calling this method
-        long measurementTimestampEpoch = firstPower.getEpochTimestamp();
+        long measurementTimestampEpoch = firstPower.epochTimestamp();
         return Instant.ofEpochSecond(measurementTimestampEpoch).atZone(ZoneId.systemDefault());
     }
 

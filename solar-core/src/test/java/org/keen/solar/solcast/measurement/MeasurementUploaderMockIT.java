@@ -4,6 +4,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keen.solar.config.TestConfiguration;
+import org.keen.solar.solcast.measurement.dal.MeasurementDao;
 import org.keen.solar.system.dal.CurrentPowerDao;
 import org.keen.solar.system.domain.CurrentPower;
 import org.mockito.ArgumentCaptor;
@@ -48,7 +49,10 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class MeasurementUploaderMockIT {
 
     @MockitoBean
-    private CurrentPowerDao currentPowerRepository;
+    private CurrentPowerDao currentPowerDao;
+
+    @MockitoBean
+    private MeasurementDao measurementDao;
 
     @Autowired
     private MeasurementUploader measurementUploader;
@@ -65,12 +69,15 @@ public class MeasurementUploaderMockIT {
     @Test
     public void givenSingleCurrentPower_whenUploadAll_thenMeasurementUploadedAndSavedToRepository() {
         // Given
+        long lastUploadedTimestamp = 1750000000;
+        when(measurementDao.getLastUploadedEpochTimestamp()).thenReturn(lastUploadedTimestamp);
+
         List<CurrentPower> currentPowerList = new ArrayList<>();
         double generationWatts = 1245D;
         Instant now = Instant.now().minus(10, ChronoUnit.MINUTES);
         long inverterEpochTimestamp = now.toEpochMilli() / 1000;
-        currentPowerList.add(new CurrentPower(inverterEpochTimestamp, generationWatts, 0D, false));
-        when(currentPowerRepository.getNotUploaded()).thenReturn(currentPowerList);
+        currentPowerList.add(new CurrentPower(inverterEpochTimestamp, generationWatts, 0D));
+        when(currentPowerDao.getStartingFrom(lastUploadedTimestamp)).thenReturn(currentPowerList);
 
         RestTemplate restTemplate = restTemplateBuilder.build();
         MockRestServiceServer restServiceServer = MockRestServiceServer.bindTo(restTemplate).build();
@@ -97,27 +104,27 @@ public class MeasurementUploaderMockIT {
         // Then
         restServiceServer.verify();
 
-        @SuppressWarnings("unchecked")
-        ArgumentCaptor<List<CurrentPower>> argumentCaptor = ArgumentCaptor.forClass(List.class);
-        verify(currentPowerRepository).save(argumentCaptor.capture());
-        List<CurrentPower> captorValue = argumentCaptor.getValue();
-        Assert.notEmpty(captorValue, "Expected non-empty list to be saved");
-        CurrentPower currentPower = captorValue.get(0);
-        Assert.state(currentPower.isUploaded(), "Expected CurrentPower to have 'uploaded' flag set");
+        ArgumentCaptor<Long> longArgumentCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(measurementDao).setLastUploadedEpochTimestamp(longArgumentCaptor.capture());
+        Assert.state(longArgumentCaptor.getValue() == nowRoundedToNextFiveMinuteBoundary.getEpochSecond(),
+                "Expected last uploaded epoch timestamp to be set to " + nowRoundedToNextFiveMinuteBoundary.getEpochSecond());
     }
 
     @Test
     public void givenMultipleCurrentPower5MinsApart_whenUploadAll_thenMeasurementsUploadedAndSavedToRepository() {
         // Given
+        long lastUploadedTimestamp = 1750000000;
+        when(measurementDao.getLastUploadedEpochTimestamp()).thenReturn(lastUploadedTimestamp);
+
         List<CurrentPower> currentPowerList = new ArrayList<>();
         double generationWatts = 1245D;
         Instant now = Instant.now().minus(20, ChronoUnit.MINUTES);
         long inverterEpochTimestamp = now.toEpochMilli() / 1000;
-        currentPowerList.add(new CurrentPower(inverterEpochTimestamp, generationWatts, 0D, false));
+        currentPowerList.add(new CurrentPower(inverterEpochTimestamp, generationWatts, 0D));
         Instant nowPlus5Mins = now.plus(5, ChronoUnit.MINUTES);
         long inverterEpochTimestampPlus5Mins = nowPlus5Mins.toEpochMilli() / 1000;
-        currentPowerList.add(new CurrentPower(inverterEpochTimestampPlus5Mins, generationWatts, 0D, false));
-        when(currentPowerRepository.getNotUploaded()).thenReturn(currentPowerList);
+        currentPowerList.add(new CurrentPower(inverterEpochTimestampPlus5Mins, generationWatts, 0D));
+        when(currentPowerDao.getStartingFrom(lastUploadedTimestamp)).thenReturn(currentPowerList);
 
         RestTemplate restTemplate = restTemplateBuilder.build();
         MockRestServiceServer restServiceServer = MockRestServiceServer.bindTo(restTemplate).build();
@@ -151,15 +158,9 @@ public class MeasurementUploaderMockIT {
         // Then
         restServiceServer.verify();
 
-        @SuppressWarnings("unchecked")
-        ArgumentCaptor<List<CurrentPower>> argumentCaptor = ArgumentCaptor.forClass(List.class);
-        verify(currentPowerRepository, times(2)).save(argumentCaptor.capture());
-        List<CurrentPower> captorValue = argumentCaptor.getAllValues().stream().flatMap(List::stream).toList();
-        Assert.notEmpty(captorValue, "Expected non-empty list to be saved");
-        Assert.state(captorValue.size() == 2, "Expected 2 CurrentPowers to be saved");
-        CurrentPower currentPower = captorValue.get(0);
-        Assert.state(currentPower.isUploaded(), "Expected CurrentPower to have 'uploaded' flag set");
-        currentPower = captorValue.get(1);
-        Assert.state(currentPower.isUploaded(), "Expected CurrentPower to have 'uploaded' flag set");
+        ArgumentCaptor<Long> longArgumentCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(measurementDao).setLastUploadedEpochTimestamp(longArgumentCaptor.capture());
+        Assert.state(longArgumentCaptor.getValue() == nowRoundedToNextFiveMinBoundaryPlus5.getEpochSecond(),
+                "Expected last uploaded epoch timestamp to be set to " + nowRoundedToNextFiveMinBoundaryPlus5.getEpochSecond());
     }
 }

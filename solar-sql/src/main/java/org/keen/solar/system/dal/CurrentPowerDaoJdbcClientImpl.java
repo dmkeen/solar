@@ -4,7 +4,6 @@ import org.keen.solar.system.domain.CurrentPower;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -17,13 +16,13 @@ public class CurrentPowerDaoJdbcClientImpl implements CurrentPowerDao {
     }
 
     @Override
-    public List<CurrentPower> getNotUploaded() {
-        return jdbcClient.sql("SELECT * FROM current_power WHERE uploaded = false")
+    public List<CurrentPower> getStartingFrom(long fromEpochSeconds) {
+        return jdbcClient.sql("SELECT * FROM current_power WHERE epoch_timestamp >= :fromEpochSeconds")
+                .param("fromEpochSeconds", fromEpochSeconds)
                 .query((rs, rowNum) -> new CurrentPower(
                         rs.getLong("epoch_timestamp"),
                         rs.getDouble("generation"),
-                        rs.getDouble("consumption"),
-                        rs.getBoolean("uploaded")
+                        rs.getDouble("consumption")
                 ))
                 .list();
     }
@@ -31,20 +30,13 @@ public class CurrentPowerDaoJdbcClientImpl implements CurrentPowerDao {
     @Override
     public void save(CurrentPower currentPower) {
         jdbcClient.sql("""
-            INSERT INTO current_power (epoch_timestamp, generation, consumption, uploaded)
-            VALUES (:epoch_timestamp, :generation, :consumption, :uploaded)
+            INSERT INTO current_power (epoch_timestamp, generation, consumption)
+            VALUES (:epoch_timestamp, :generation, :consumption)
             """)
-                .param("epoch_timestamp", currentPower.getEpochTimestamp())
-                .param("generation", currentPower.getGeneration())
-                .param("consumption", currentPower.getConsumption())
-                .param("uploaded", currentPower.isUploaded())
+                .param("epoch_timestamp", currentPower.epochTimestamp())
+                .param("generation", currentPower.generation())
+                .param("consumption", currentPower.consumption())
                 .update();
     }
 
-    @Override
-    public void save(Collection<CurrentPower> currentPowers) {
-        for (CurrentPower currentPower : currentPowers) {
-            save(currentPower);
-        }
-    }
 }
