@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.3</version>
+		<version>3.5.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<groupId>org.keen.solar</groupId>
 	<artifactId>solar-parent</artifactId>
-	<version>4.1.1</version>
+	<version>4.1.2</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -25,8 +25,8 @@
 	<properties>
 		<java.version>21</java.version>
 
-		<spring-modulith-bom.version>1.4.1</spring-modulith-bom.version>
-		<micrometer-registry-prometheus.version>1.15.1</micrometer-registry-prometheus.version>
+		<spring-modulith-bom.version>1.4.2</spring-modulith-bom.version>
+		<micrometer-registry-prometheus.version>1.15.3</micrometer-registry-prometheus.version>
 	</properties>
 
 	<dependencies>
