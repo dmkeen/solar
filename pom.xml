@@ -17,7 +17,8 @@
 	<modules>
 		<module>solar-core</module>
 		<module>solar-sql</module>
-	</modules>
+		<module>solar-eclipsestore</module>
+    </modules>
 
 	<name>Solar Parent</name>
 	<description>Retrieves solar data from a Fronius inverter and persists it to a data store.</description>
@@ -138,7 +139,7 @@
 						<exclude>**/SystemInfoLoggerIT.java</exclude>
 					</excludes>
 					<argLine>-javaagent:${org.mockito:mockito-core:jar}</argLine>
-				</configuration>
+                </configuration>
 				<executions>
 					<execution>
 						<goals>
