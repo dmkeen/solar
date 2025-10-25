@@ -18,6 +18,7 @@
 		<module>solar-core</module>
 		<module>solar-sql</module>
 		<module>solar-eclipsestore</module>
+        <module>solar-api</module>
     </modules>
 
 	<name>Solar Parent</name>

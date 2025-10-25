@@ -5,6 +5,7 @@ import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
 import org.keen.solar.solcast.forecast.domain.GenerationForecast;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static org.keen.solar.solcast.forecast.dal.GenerationForecastIndices.periodEndEpoch;
@@ -40,5 +41,12 @@ public class ForecastDaoEclipseStoreImpl implements ForecastDao {
         });
         forecasts.forEach(storageManager::store);
         storageManager.store(root);
+    }
+
+    @Override
+    public List<GenerationForecast> getForecasts(long fromEpochSeconds, long toEpochSeconds) {
+        return root.query(periodEndEpoch.greaterThanEqual(fromEpochSeconds)
+                .and(periodEndEpoch.lessThan(toEpochSeconds)))
+                .toList();
     }
 }

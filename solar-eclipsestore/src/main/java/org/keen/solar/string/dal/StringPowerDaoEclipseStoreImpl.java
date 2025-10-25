@@ -4,6 +4,8 @@ import org.eclipse.store.gigamap.types.GigaMap;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
 import org.keen.solar.string.domain.StringPower;
 
+import java.util.List;
+
 import static org.keen.solar.string.dal.StringPowerIndices.periodEndEpoch;
 
 public class StringPowerDaoEclipseStoreImpl implements StringPowerDao {
@@ -29,5 +31,12 @@ public class StringPowerDaoEclipseStoreImpl implements StringPowerDao {
     public void save(StringPower stringPower) {
         root.add(stringPower);
         storageManager.storeAll(stringPower, root);
+    }
+
+    @Override
+    public List<StringPower> getStringPowers(long fromEpochSeconds, long toEpochSeconds) {
+        return root.query(periodEndEpoch.greaterThanEqual(fromEpochSeconds)
+                .and(periodEndEpoch.lessThan(toEpochSeconds)))
+                .toList();
     }
 }

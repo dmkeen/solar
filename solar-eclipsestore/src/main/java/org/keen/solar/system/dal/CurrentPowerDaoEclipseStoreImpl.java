@@ -33,6 +33,13 @@ public class CurrentPowerDaoEclipseStoreImpl implements CurrentPowerDao {
     }
 
     @Override
+    public List<CurrentPower> getCurrentPowers(long fromEpochSeconds, long toEpochSeconds) {
+        return root.query(epochTimestamp.greaterThanEqual(fromEpochSeconds)
+                .and(epochTimestamp.lessThan(toEpochSeconds)))
+                .toList();
+    }
+
+    @Override
     public void save(CurrentPower currentPower) {
         root.add(currentPower);
         storageManager.storeAll(currentPower, root);

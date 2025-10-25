@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.List;
 
 @Component
 public class ForecastDaoJdbcClientImpl implements ForecastDao {
@@ -34,5 +35,23 @@ public class ForecastDaoJdbcClientImpl implements ForecastDao {
                     .param("period_length_seconds", forecast.period_length_seconds())
                     .update();
         }
+    }
+
+    @Override
+    public List<GenerationForecast> getForecasts(long fromEpochSeconds, long toEpochSeconds) {
+        return jdbcClient.sql("""
+                SELECT * FROM generation_forecast
+                WHERE period_end_epoch >= :fromEpochSeconds
+                AND period_end_epoch < :toEpochSeconds
+                """)
+                .param("fromEpochSeconds", fromEpochSeconds)
+                .param("toEpochSeconds", toEpochSeconds)
+                .query((rs, rowNum) -> new GenerationForecast(
+                        rs.getDouble("pv_estimate"),
+                        rs.getDouble("pv_estimat10"),
+                        rs.getDouble("pv_estimate90"),
+                        rs.getLong("period_end_epoch"),
+                        rs.getInt("period_length_seconds")))
+                .list();
     }
 }

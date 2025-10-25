@@ -4,6 +4,8 @@ import org.keen.solar.string.domain.StringPower;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class StringPowerDaoJdbcClientImpl implements StringPowerDao {
 
@@ -28,5 +30,24 @@ public class StringPowerDaoJdbcClientImpl implements StringPowerDao {
                 .param("string2_amps", stringPower.string2Data().amps())
                 .param("string2_power", stringPower.string2Data().power())
                 .update();
+    }
+
+    @Override
+    public List<StringPower> getStringPowers(long fromEpochSeconds, long toEpochSeconds) {
+        return jdbcClient.sql("""
+                SELECT * FROM string_power
+                WHERE period_end_epoch >= :fromEpochSeconds
+                AND period_end_epoch < :toEpochSeconds
+                """)
+                .param("fromEpochSeconds", fromEpochSeconds)
+                .param("toEpochSeconds", toEpochSeconds)
+                .query((rs, rowNum) -> new StringPower(
+                        rs.getLong("period_end_epoch"),
+                        rs.getInt("period_length_seconds"),
+                        rs.getBigDecimal("string1_volts"),
+                        rs.getBigDecimal("string1_amps"),
+                        rs.getBigDecimal("string2_volts"),
+                        rs.getBigDecimal("string2_amps")))
+                .list();
     }
 }
