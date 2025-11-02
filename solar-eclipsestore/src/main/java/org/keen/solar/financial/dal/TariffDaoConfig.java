@@ -1,5 +1,6 @@
 package org.keen.solar.financial.dal;
 
+import org.eclipse.serializer.persistence.types.PersistenceFieldEvaluator;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorage;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,15 @@ public class TariffDaoConfig {
     }
 
     private EmbeddedStorageManager storageManager(Path rootStorage) {
-        return EmbeddedStorage.Foundation(rootStorage.resolve("tariff")).start();
+        // Use a PersistenceFieldEvaluator that stores all fields of an object,
+        // so that EnumMap can be stored and reloaded successfully.
+        // EnumMap contains a number of transient fields that EclipseStore
+        // would not otherwise store, but this leads to a NPE after an
+        // application restart.
+        PersistenceFieldEvaluator fieldEvaluator = (aClass, field) -> true;
+        return EmbeddedStorage.Foundation(rootStorage.resolve("tariff"))
+                .onConnectionFoundation(c -> c.setFieldEvaluatorPersistable(fieldEvaluator))
+                .createEmbeddedStorageManager()
+                .start();
     }
 }
