@@ -1,5 +1,6 @@
 package org.keen.solar.financial.dal;
 
+import org.eclipse.serializer.concurrency.LockedExecutor;
 import org.eclipse.store.gigamap.types.GigaMap;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
 import org.keen.solar.financial.domain.PowerCost;
@@ -12,10 +13,12 @@ public class PowerCostDaoEclipseStoreImpl implements PowerCostDao {
 
     private final EmbeddedStorageManager storageManager;
     private final GigaMap<PowerCost> root;
+    private final LockedExecutor executor;
 
     @SuppressWarnings("unchecked")
     public PowerCostDaoEclipseStoreImpl(EmbeddedStorageManager storageManager) {
         this.storageManager = storageManager;
+        this.executor = LockedExecutor.New();
 
         if (storageManager.root() == null) {
             root = GigaMap.<PowerCost>Builder()
@@ -29,14 +32,16 @@ public class PowerCostDaoEclipseStoreImpl implements PowerCostDao {
 
     @Override
     public void save(PowerCost powerCost) {
-        root.add(powerCost);
-        storageManager.storeAll(powerCost, root);
+        executor.write(() -> {
+            root.add(powerCost);
+            storageManager.storeAll(powerCost, root);
+        });
     }
 
     @Override
     public List<PowerCost> getPowerCosts(long fromEpochTime, long toEpochTime) {
-        return root.query(periodEndEpoch.greaterThanEqual(fromEpochTime)
+        return executor.read(() -> root.query(periodEndEpoch.greaterThanEqual(fromEpochTime)
                 .and(periodEndEpoch.lessThan(toEpochTime)))
-                .toList();
+                .toList());
     }
 }

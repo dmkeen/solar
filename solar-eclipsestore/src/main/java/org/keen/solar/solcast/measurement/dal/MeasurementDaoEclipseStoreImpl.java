@@ -1,14 +1,17 @@
 package org.keen.solar.solcast.measurement.dal;
 
+import org.eclipse.serializer.concurrency.LockedExecutor;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
 
 public class MeasurementDaoEclipseStoreImpl implements MeasurementDao {
 
     private final EmbeddedStorageManager storageManager;
     private Long root;
+    private final LockedExecutor executor;
 
     public MeasurementDaoEclipseStoreImpl(EmbeddedStorageManager storageManager) {
         this.storageManager = storageManager;
+        this.executor = LockedExecutor.New();
 
         if (storageManager.root() == null) {
             root = 0L;
@@ -20,12 +23,14 @@ public class MeasurementDaoEclipseStoreImpl implements MeasurementDao {
 
     @Override
     public long getLastUploadedEpochTimestamp() {
-        return root;
+        return executor.read(() -> root);
     }
 
     @Override
     public void setLastUploadedEpochTimestamp(long epochSeconds) {
-        root = epochSeconds;
-        storageManager.setRoot(root);
+        executor.write(() -> {
+            root = epochSeconds;
+            storageManager.setRoot(root);
+        });
     }
 }

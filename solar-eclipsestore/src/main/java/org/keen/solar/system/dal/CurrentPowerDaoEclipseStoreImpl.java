@@ -1,5 +1,6 @@
 package org.keen.solar.system.dal;
 
+import org.eclipse.serializer.concurrency.LockedExecutor;
 import org.eclipse.store.gigamap.types.GigaMap;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
 import org.keen.solar.system.domain.CurrentPower;
@@ -12,10 +13,12 @@ public class CurrentPowerDaoEclipseStoreImpl implements CurrentPowerDao {
 
     private final EmbeddedStorageManager storageManager;
     private final GigaMap<CurrentPower> root;
+    private final LockedExecutor executor;
 
     @SuppressWarnings("unchecked")
     public CurrentPowerDaoEclipseStoreImpl(EmbeddedStorageManager storageManager) {
         this.storageManager = storageManager;
+        this.executor = LockedExecutor.New();
 
         if (storageManager.root() == null) {
             root = GigaMap.<CurrentPower>Builder()
@@ -29,20 +32,22 @@ public class CurrentPowerDaoEclipseStoreImpl implements CurrentPowerDao {
 
     @Override
     public List<CurrentPower> getStartingFrom(long fromEpochSeconds) {
-        return root.query(epochTimestamp.greaterThanEqual(fromEpochSeconds)).toList();
+        return executor.read(() -> root.query(epochTimestamp.greaterThanEqual(fromEpochSeconds)).toList());
     }
 
     @Override
     public List<CurrentPower> getCurrentPowers(long fromEpochSeconds, long toEpochSeconds) {
-        return root.query(epochTimestamp.greaterThanEqual(fromEpochSeconds)
+        return executor.read(() -> root.query(epochTimestamp.greaterThanEqual(fromEpochSeconds)
                 .and(epochTimestamp.lessThan(toEpochSeconds)))
-                .toList();
+                .toList());
     }
 
     @Override
     public void save(CurrentPower currentPower) {
-        root.add(currentPower);
-        storageManager.storeAll(currentPower, root);
+        executor.write(() -> {
+            root.add(currentPower);
+            storageManager.storeAll(currentPower, root);
+        });
     }
 
 }

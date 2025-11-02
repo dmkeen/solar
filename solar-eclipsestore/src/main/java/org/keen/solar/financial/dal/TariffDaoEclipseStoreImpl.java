@@ -1,5 +1,6 @@
 package org.keen.solar.financial.dal;
 
+import org.eclipse.serializer.concurrency.LockedExecutor;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
 import org.keen.solar.financial.domain.Tariff;
 import org.slf4j.Logger;
@@ -21,10 +22,12 @@ public class TariffDaoEclipseStoreImpl implements TariffDao {
 
     private final EmbeddedStorageManager storageManager;
     private final Map<DayOfWeek, List<Tariff>> root;
+    private final LockedExecutor executor;
 
     @SuppressWarnings("unchecked")
     public TariffDaoEclipseStoreImpl(EmbeddedStorageManager storageManager) {
         this.storageManager = storageManager;
+        this.executor = LockedExecutor.New();
 
         if (storageManager.root() == null) {
             root = new EnumMap<>(DayOfWeek.class);
@@ -46,28 +49,26 @@ public class TariffDaoEclipseStoreImpl implements TariffDao {
 
     private Tariff getEffectiveTariff(DayOfWeek dayOfWeek, LocalTime localTime, long epochTime,
                                       Predicate<Tariff> tariffPredicate) {
-        synchronized (root) {
-            List<Tariff> tariffs = root.get(dayOfWeek);
-            if (tariffs == null) {
-                return null;
-            }
-            List<Tariff> applicableTariffs = tariffs.stream()
-                    .filter(tariffPredicate)
-                    .filter(tariff -> tariff.startEffectiveDateEpoch() < epochTime &&
-                            (tariff.endEffectiveDateEpoch() == null || tariff.endEffectiveDateEpoch() > epochTime))
-                    .filter(tariff ->
-                            (tariff.startOfPeriod().isBefore(localTime) || tariff.startOfPeriod().equals(localTime))
-                                    && tariff.endOfPeriod().isAfter(localTime))
-                    .toList();
-            if (applicableTariffs.isEmpty()) {
-                return null;
-            }
-            if (applicableTariffs.size() > 1) {
-                logger.warn("Unexpected state: Found multiple applicable tariffs for {}, {}, {}: {}",
-                        dayOfWeek, localTime, epochTime, applicableTariffs);
-            }
-            return applicableTariffs.getFirst();
+        List<Tariff> tariffs = executor.read(() -> root.get(dayOfWeek));
+        if (tariffs == null) {
+            return null;
         }
+        List<Tariff> applicableTariffs = tariffs.stream()
+                .filter(tariffPredicate)
+                .filter(tariff -> tariff.startEffectiveDateEpoch() < epochTime &&
+                        (tariff.endEffectiveDateEpoch() == null || tariff.endEffectiveDateEpoch() > epochTime))
+                .filter(tariff ->
+                        (tariff.startOfPeriod().isBefore(localTime) || tariff.startOfPeriod().equals(localTime))
+                                && tariff.endOfPeriod().isAfter(localTime))
+                .toList();
+        if (applicableTariffs.isEmpty()) {
+            return null;
+        }
+        if (applicableTariffs.size() > 1) {
+            logger.warn("Unexpected state: Found multiple applicable tariffs for {}, {}, {}: {}",
+                    dayOfWeek, localTime, epochTime, applicableTariffs);
+        }
+        return applicableTariffs.getFirst();
     }
 
     @Override
@@ -80,37 +81,35 @@ public class TariffDaoEclipseStoreImpl implements TariffDao {
         // Since we've validated that all effective dates are the same, we can just select one.
         long startEffectiveDateEpoch = newTariffMap.get(DayOfWeek.MONDAY).getFirst().startEffectiveDateEpoch();
 
-        synchronized (root) {
-            newTariffMap.forEach((key, value) -> {
-                List<Tariff> existingTariffs = root.get(key);
-                if (existingTariffs == null) {
-                    existingTariffs = new ArrayList<>();
-                }
-                // Expire current tariffs
-                List<Tariff> updatedTariffs = existingTariffs.stream()
-                        .map(tariff -> {
-                            if (tariff.endEffectiveDateEpoch() != null
-                                    && tariff.endEffectiveDateEpoch() < startEffectiveDateEpoch) {
-                                return tariff;
-                            } else {
-                                return new Tariff(tariff.feedIn(), tariff.startEffectiveDateEpoch(),
-                                        startEffectiveDateEpoch - 1, tariff.dayOfWeek(),
-                                        tariff.startOfPeriod(), tariff.endOfPeriod(), tariff.pricePerKwh());
-                            }
-                        })
-                        .collect(Collectors.toCollection(ArrayList::new));
+        executor.write(() -> newTariffMap.forEach((key, value) -> {
+            List<Tariff> existingTariffs = root.get(key);
+            if (existingTariffs == null) {
+                existingTariffs = new ArrayList<>();
+            }
+            // Expire current tariffs
+            List<Tariff> updatedTariffs = existingTariffs.stream()
+                    .map(tariff -> {
+                        if (tariff.endEffectiveDateEpoch() != null
+                                && tariff.endEffectiveDateEpoch() < startEffectiveDateEpoch) {
+                            return tariff;
+                        } else {
+                            return new Tariff(tariff.feedIn(), tariff.startEffectiveDateEpoch(),
+                                    startEffectiveDateEpoch - 1, tariff.dayOfWeek(),
+                                    tariff.startOfPeriod(), tariff.endOfPeriod(), tariff.pricePerKwh());
+                        }
+                    })
+                    .collect(Collectors.toCollection(ArrayList::new));
 
-                // Insert new tariffs
-                updatedTariffs.addAll(value);
-                // Update store
-                boolean replaced = root.replace(key, existingTariffs, updatedTariffs);
-                if (!replaced) {
-                    logger.warn("Existing tariffs for {} not replaced in store! Existing: {}, Updated: {}",
-                            key, existingTariffs, updatedTariffs);
-                }
-                storageManager.storeAll(root, updatedTariffs);
-            });
-        }
+            // Insert new tariffs
+            updatedTariffs.addAll(value);
+            // Update store
+            boolean replaced = root.replace(key, existingTariffs, updatedTariffs);
+            if (!replaced) {
+                logger.warn("Existing tariffs for {} not replaced in store! Existing: {}, Updated: {}",
+                        key, existingTariffs, updatedTariffs);
+            }
+            storageManager.storeAll(root, updatedTariffs);
+        }));
     }
 
     private static void validateTariffs(List<Tariff> usageTariffs, List<Tariff> feedInTariffs) {
