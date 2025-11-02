@@ -2,9 +2,7 @@ package org.keen.solar.system.dal;
 
 import org.eclipse.store.storage.embedded.types.EmbeddedStorage;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 import org.keen.solar.system.domain.CurrentPower;
 
@@ -16,15 +14,37 @@ import java.util.List;
  * <br/>
  * EclipseStore requires: --add-exports java.base/jdk.internal.misc=ALL-UNNAMED
  */
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CurrentPowerDaoEclipseStoreImplIT {
 
     private static EmbeddedStorageManager storageManager;
 
+    @TempDir static Path tempDir;
+
     @BeforeAll
-    static void setup(@TempDir Path tempDir) {
+    static void setup() {
         storageManager = EmbeddedStorage.start(tempDir);
     }
 
+    @Order(1)
+    @Test
+    void givenStorageManager_whenShutdownAndRestart_thenObjectsAreReloaded() {
+        // Given
+        CurrentPowerDaoEclipseStoreImpl store = new CurrentPowerDaoEclipseStoreImpl(storageManager);
+        int epochTimestamp = 1752390721;
+        store.save(new CurrentPower(epochTimestamp, 0, 450));
+
+        // When
+        storageManager.shutdown();
+        storageManager = EmbeddedStorage.start(tempDir);
+
+        // Then
+        store = new CurrentPowerDaoEclipseStoreImpl(storageManager);
+        List<CurrentPower> currentPowers = store.getStartingFrom(epochTimestamp);
+        Assertions.assertEquals(1, currentPowers.size());
+    }
+
+    @Order(2)
     @Test
     void givenMultipleCurrentPowers_whenSave_thenCanGetStartingFrom() {
         // Given

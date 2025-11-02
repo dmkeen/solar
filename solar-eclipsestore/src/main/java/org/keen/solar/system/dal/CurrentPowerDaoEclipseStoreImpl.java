@@ -25,6 +25,7 @@ public class CurrentPowerDaoEclipseStoreImpl implements CurrentPowerDao {
                     .withBitmapIdentityIndex(epochTimestamp)
                     .build();
             storageManager.setRoot(root);
+            storageManager.storeRoot();
         } else {
             root = (GigaMap<CurrentPower>) storageManager.root();
         }

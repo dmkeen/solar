@@ -25,6 +25,7 @@ public class StringPowerDaoEclipseStoreImpl implements StringPowerDao {
                     .withBitmapIdentityIndex(periodEndEpoch)
                     .build();
             storageManager.setRoot(root);
+            storageManager.storeRoot();
         } else {
             root = (GigaMap<StringPower>) storageManager.root();
         }

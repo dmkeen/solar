@@ -16,6 +16,7 @@ public class MeasurementDaoEclipseStoreImpl implements MeasurementDao {
         if (storageManager.root() == null) {
             root = 0L;
             storageManager.setRoot(root);
+            storageManager.storeRoot();
         } else {
             root = (Long) storageManager.root();
         }
@@ -31,6 +32,7 @@ public class MeasurementDaoEclipseStoreImpl implements MeasurementDao {
         executor.write(() -> {
             root = epochSeconds;
             storageManager.setRoot(root);
+            storageManager.storeRoot();
         });
     }
 }

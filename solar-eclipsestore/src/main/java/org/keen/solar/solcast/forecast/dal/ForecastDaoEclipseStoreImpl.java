@@ -27,6 +27,7 @@ public class ForecastDaoEclipseStoreImpl implements ForecastDao {
                     .withBitmapIdentityIndex(periodEndEpoch)
                     .build();
             storageManager.setRoot(root);
+            storageManager.storeRoot();
         } else {
             root = (GigaMap<GenerationForecast>) storageManager.root();
         }

@@ -25,6 +25,7 @@ public class PowerCostDaoEclipseStoreImpl implements PowerCostDao {
                     .withBitmapIdentityIndex(periodEndEpoch)
                     .build();
             storageManager.setRoot(root);
+            storageManager.storeRoot();
         } else {
             root = (GigaMap<PowerCost>) storageManager.root();
         }

@@ -32,6 +32,7 @@ public class TariffDaoEclipseStoreImpl implements TariffDao {
         if (storageManager.root() == null) {
             root = new EnumMap<>(DayOfWeek.class);
             storageManager.setRoot(root);
+            storageManager.storeRoot();
         } else {
             root = (Map<DayOfWeek, List<Tariff>>) storageManager.root();
         }
