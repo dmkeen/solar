@@ -1,19 +1,28 @@
 # Solar monitoring app
 Monitors solar panel output using the Fronius inverter API and power consumption in realtime and 
-persists the data to a MySQL database for display in Grafana.
+persists the data to either a MySQL or EclipseStore backend for display in Grafana.
 
 * Monitors instantaneous power generation and consumption
-* Calculate cost of power used
+* Calculates cost of power used
 * Monitors per-string power generation
 * Retrieves Solcast solar forecasts (https://solcast.com/)
 * Uploads actual generation to tune the Solcast forecast
 
 # Usage
-Configure solar panel system in Solcast
 
+## Solcast
+Configure your solar panel system in Solcast. Solcast has a free "home hobbyist" tier
+that includes 20 API calls per day.
+
+## Application
+Choose which backend to use:
+* MySQL/MariaDB
+* EclipseStore
+
+### MySQL/MariaDB backend
 Setup and run the app:
 * Build the application using Maven: `mvn clean package`
-* Install and run MySQL (https://www.mysql.com/ or https://mariadb.org/)
+* Install and run MySQL (https://www.mysql.com/) or MariaDB (https://mariadb.org/)
 * Setup the database using `/solar-sql/src/main/resources/mysql/setup.sql` (substitute your own passwords)
 * Add power tariffs (see below for details)
 * Configure properties in `application.properties`
@@ -22,14 +31,33 @@ Setup and run the app:
   * `app.solcast.site-id` - your Solcast site ID
   * `spring.datasource.username` - your MySQL app user
   * `spring.datasource.password` - your MySQL app user password
-* Run the application
+* Run the application: `java solar-sql-x.y.z.jar`
 
+### EclipseStore backend
+Setup and run the app:
+* Build the application using Maven: `mvn clean package`
+* Add power tariffs (see below for details)
+* Configure properties in `application.properties`
+    * `app.inverter.host` - hostname/IP of the inverter web API
+    * `app.solcast.api-key` - your Solcast API key value
+    * `app.solcast.site-id` - your Solcast site ID
+    * `app.eclipse-store.root-path` - path to the EclipseStore storage folder
+* Run the application: `java --add-exports java.base/jdk.internal.misc=ALL-UNNAMED -jar solar-eclipsestore-x.y.z.jar`
+
+EclipseStore reference manual: https://docs.eclipsestore.io/manual/storage/getting-started.html
+
+## Grafana
 To view the output, use Grafana:
 * Install and run Grafana
-* Configure the MySQL datasource
-* Import the Solar dashboard found in `/solar-core/src/main/resources/grafana/Solar.json`
+* Configure the datasource:
+  * MySQL for the MySQL backend
+  * Infinity for the EclipseStore backend:
+    * Default API endpoint is http://localhost:8080/api
+* Import the appropriate Solar dashboard, either:
+  * `/solar-sql/src/main/resources/grafana/Solar SQL.json`, or
+  * `/solar-api/src/main/resources/grafana/Solar API.json`
 
-Sample output:
+## Sample output
 ![Grafana dashboard](grafana-dashboard-hd.webp)
 
 ## Power tariff configuration
