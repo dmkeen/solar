@@ -13,11 +13,8 @@ import java.util.List;
 @Configuration
 public class MessagingConfiguration {
 
-    @Autowired
-    private ObjectMapper mapper;
-
     @Bean
-    public MappingJackson2HttpMessageConverter javascriptHttpMessageConverter() {
+    public MappingJackson2HttpMessageConverter javascriptHttpMessageConverter(@Autowired ObjectMapper mapper) {
         // Bean needed because the Fronius API returns a response with the incorrect Content-Type
         // of "text/javascript" instead of "application/json".
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter(mapper);
