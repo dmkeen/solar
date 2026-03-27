@@ -3,7 +3,8 @@ package org.keen.solar.solcast.measurement;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.keen.solar.config.TestConfiguration;
+import org.keen.solar.config.MessagingConfiguration;
+import org.keen.solar.config.ObjectMapperConfiguration;
 import org.keen.solar.solcast.measurement.dal.MeasurementDao;
 import org.keen.solar.system.dal.CurrentPowerDao;
 import org.keen.solar.system.domain.CurrentPower;
@@ -11,17 +12,20 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.web.client.MockServerRestTemplateCustomizer;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.util.Assert;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -43,7 +47,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 // But including @JsonTest switches off the request/response logging and the assertion
 // logging from MockRestServiceServer.
 @JsonTest
-@ContextConfiguration(classes = {TestConfiguration.class, MeasurementUploader.class})
+@ContextConfiguration(classes = {ObjectMapperConfiguration.class, MessagingConfiguration.class,
+        MeasurementUploaderMockIT.Config.class, MeasurementUploader.class})
 @ExtendWith(SpringExtension.class)
 @TestPropertySource(locations = "/application.properties")
 public class MeasurementUploaderMockIT {
@@ -58,13 +63,29 @@ public class MeasurementUploaderMockIT {
     private MeasurementUploader measurementUploader;
 
     @Autowired
-    private RestTemplateBuilder restTemplateBuilder;
+    private MockServerRestTemplateCustomizer customizer;
 
     @Value("${app.solcast.api-key}")
     private String solcastApiKey;
 
     @Value("${app.solcast.site-id}")
     private String solcastSiteId;
+
+    @TestConfiguration
+    static class Config {
+
+        @Bean
+        public RestTemplateBuilder restTemplateBuilder(HttpMessageConverter<Object> converter,
+                                                       @Value("${test.debug.logging.enable}") boolean enableLogging) {
+            return new RestTemplateBuilder(org.keen.solar.config.TestConfiguration.restTemplateCustomizer(converter, enableLogging),
+                    mockServerRestTemplateCustomizer());
+        }
+
+        @Bean
+        public MockServerRestTemplateCustomizer mockServerRestTemplateCustomizer() {
+            return new MockServerRestTemplateCustomizer();
+        }
+    }
 
     @Test
     public void givenSingleCurrentPower_whenUploadAll_thenMeasurementUploadedAndSavedToRepository() {
@@ -79,8 +100,8 @@ public class MeasurementUploaderMockIT {
         currentPowerList.add(new CurrentPower(inverterEpochTimestamp, generationWatts, 0D));
         when(currentPowerDao.getStartingFrom(lastUploadedTimestamp)).thenReturn(currentPowerList);
 
-        RestTemplate restTemplate = restTemplateBuilder.build();
-        MockRestServiceServer restServiceServer = MockRestServiceServer.bindTo(restTemplate).build();
+        MockRestServiceServer restServiceServer = customizer.getServer();
+        restServiceServer.reset();
 
         Instant nowRoundedToNextFiveMinuteBoundary = now
                 .truncatedTo(ChronoUnit.HOURS)
@@ -126,8 +147,8 @@ public class MeasurementUploaderMockIT {
         currentPowerList.add(new CurrentPower(inverterEpochTimestampPlus5Mins, generationWatts, 0D));
         when(currentPowerDao.getStartingFrom(lastUploadedTimestamp)).thenReturn(currentPowerList);
 
-        RestTemplate restTemplate = restTemplateBuilder.build();
-        MockRestServiceServer restServiceServer = MockRestServiceServer.bindTo(restTemplate).build();
+        MockRestServiceServer restServiceServer = customizer.getServer();
+        restServiceServer.reset();
 
         Instant nowRoundedToNextFiveMinBoundary = now
                 .truncatedTo(ChronoUnit.HOURS)

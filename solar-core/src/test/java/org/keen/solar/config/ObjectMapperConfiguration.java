@@ -2,6 +2,7 @@ package org.keen.solar.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.keen.solar.system.domain.CurrentPower;
 import org.keen.solar.system.fronius.GetPowerFlowRealtimeDataDeserializer;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,7 @@ public class ObjectMapperConfiguration {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(CurrentPower.class, new GetPowerFlowRealtimeDataDeserializer(CurrentPower.class));
         objectMapper.registerModule(module);
+        objectMapper.registerModule(new JavaTimeModule());
         return objectMapper;
     }
 
