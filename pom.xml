@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.9</version>
+		<version>3.5.13</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<groupId>org.keen.solar</groupId>
 	<artifactId>solar-parent</artifactId>
-	<version>5.0.1</version>
+	<version>5.0.2</version>
 	<packaging>pom</packaging>
 
 	<modules>
