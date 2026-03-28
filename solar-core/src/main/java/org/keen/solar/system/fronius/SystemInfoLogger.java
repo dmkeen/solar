@@ -29,14 +29,14 @@ public class SystemInfoLogger {
     private final Logger logger;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final String url;
 
-    @Value("${app.inverter.host}")
-    private String inverterApiHost;
-
-    public SystemInfoLogger(RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper) {
+    public SystemInfoLogger(RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper,
+                            @Value("${app.inverter.host}") String inverterApiHost) {
         this.restTemplate = restTemplateBuilder.build();
         this.objectMapper = objectMapper;
         this.logger = LoggerFactory.getLogger(SystemInfoLogger.class);
+        this.url = "http://" + inverterApiHost + "/solar_api/v1/GetLoggerInfo.cgi";
     }
 
     @Async
@@ -44,7 +44,7 @@ public class SystemInfoLogger {
     @Scheduled(cron = "@daily")
     public void logInfo() throws JsonProcessingException {
         OffsetDateTime currentApplicationTime = OffsetDateTime.now();
-        String response = restTemplate.getForObject("http://" + inverterApiHost + "/solar_api/v1/GetLoggerInfo.cgi", String.class);
+        String response = restTemplate.getForObject(url, String.class);
         JsonNode jsonNode = objectMapper.readTree(response);
         String timezone = jsonNode.at("/Body/LoggerInfo/TimezoneName").textValue();
         int utcOffset = jsonNode.at("/Body/LoggerInfo/UTCOffset").intValue();
