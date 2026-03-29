@@ -41,7 +41,7 @@ public class StringPowerDaoJdbcClientImpl implements StringPowerDao {
                 """)
                 .param("fromEpochSeconds", fromEpochSeconds)
                 .param("toEpochSeconds", toEpochSeconds)
-                .query((rs, rowNum) -> new StringPower(
+                .query((rs, _) -> new StringPower(
                         rs.getLong("period_end_epoch"),
                         rs.getInt("period_length_seconds"),
                         rs.getBigDecimal("string1_volts"),

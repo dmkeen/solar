@@ -41,7 +41,7 @@ public class MeasurementResponseDeserializerTest {
         List<Measurement> measurements = measurementResponse.getMeasurements();
         Assert.notEmpty(measurements, "Expected at least one Measurement");
         Assert.state(measurements.size() == 1, "Expected a single Measurement");
-        Measurement measurement = measurements.get(0);
+        Measurement measurement = measurements.getFirst();
         Assert.state(measurement.getPeriod_end().equals(OffsetDateTime.parse(periodEndString)),
                 "Expected period end to be %s but was %s".formatted(periodEndString, measurement.getPeriod_end()));
         Assert.state(measurement.getPeriod().equals(Duration.parse(periodString)),

@@ -142,7 +142,7 @@ public class ForecastPersisterMockDatabaseTest {
     private GenerationForecast getGenerationForecast(long periodEndEpoch) {
         return jdbcClient.sql("SELECT * FROM generation_forecast WHERE period_end_epoch = :period_end_epoch")
                 .param("period_end_epoch", periodEndEpoch)
-                .query((rs, rowNum) -> new GenerationForecast(
+                .query((rs, _) -> new GenerationForecast(
                         rs.getDouble("pv_estimate"),
                         rs.getDouble("pv_estimate10"),
                         rs.getDouble("pv_estimate90"),
@@ -154,7 +154,7 @@ public class ForecastPersisterMockDatabaseTest {
 
     private long getCount() {
         return jdbcClient.sql("SELECT COUNT(*) FROM generation_forecast")
-                .query((rs, rowNum) -> rs.getLong(1))
+                .query((rs, _) -> rs.getLong(1))
                 .single();
     }
 

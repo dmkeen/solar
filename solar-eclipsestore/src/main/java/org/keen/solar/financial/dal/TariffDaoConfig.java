@@ -22,7 +22,7 @@ public class TariffDaoConfig {
         // EnumMap contains a number of transient fields that EclipseStore
         // would not otherwise store, but this leads to a NPE after an
         // application restart.
-        PersistenceFieldEvaluator fieldEvaluator = (aClass, field) -> true;
+        PersistenceFieldEvaluator fieldEvaluator = (_, _) -> true;
         return EmbeddedStorage.Foundation(rootStorage.resolve("tariff"))
                 .onConnectionFoundation(c -> c.setFieldEvaluatorPersistable(fieldEvaluator))
                 .createEmbeddedStorageManager()

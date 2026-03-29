@@ -51,7 +51,7 @@ public class PowerCostCalculatorTest {
         ArgumentCaptor<PowerCost> argumentCaptor = ArgumentCaptor.forClass(PowerCost.class);
         verify(powerCostRepository, times(2)).save(argumentCaptor.capture());
         List<PowerCost> powerCost = argumentCaptor.getAllValues();
-        PowerCost powerCost1 = powerCost.get(0);
+        PowerCost powerCost1 = powerCost.getFirst();
         Assertions.assertEquals(BigDecimal.valueOf(59021529L, 12),
                 powerCost1.cost().setScale(12, RoundingMode.HALF_UP));
         Assertions.assertEquals(1730493120, powerCost1.periodEndEpoch());

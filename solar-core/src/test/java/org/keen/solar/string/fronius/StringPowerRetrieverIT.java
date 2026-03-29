@@ -36,7 +36,7 @@ public class StringPowerRetrieverIT {
         stringPowerList.sort(Comparator.comparing(StringPower::periodEndEpoch));
         Assertions.assertEquals(OffsetDateTime.now().truncatedTo(ChronoUnit.DAYS).toEpochSecond(), stringPowerList.getFirst().periodEndEpoch());
 
-        System.out.println(stringPowerList);
+        IO.println(stringPowerList);
     }
 
     @Test
@@ -46,6 +46,6 @@ public class StringPowerRetrieverIT {
         Assertions.assertNotNull(stringPower);
         Assertions.assertTrue(stringPower.periodEndEpoch() > OffsetDateTime.now().minusMinutes(6).toEpochSecond());
 
-        System.out.println(stringPower);
+        IO.println(stringPower);
     }
 }

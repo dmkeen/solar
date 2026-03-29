@@ -41,7 +41,7 @@ class CurrentPowerDaoJdbcClientImplIT {
 
         // Then
         List<CurrentPower> results = jdbcClient.sql("SELECT * FROM current_power")
-                .query((rs, rowNum) -> new CurrentPower(
+                .query((rs, _) -> new CurrentPower(
                         rs.getLong("epoch_timestamp"),
                         rs.getDouble("generation"),
                         rs.getDouble("consumption")

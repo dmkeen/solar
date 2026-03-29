@@ -67,7 +67,7 @@ class CurrentPowerDaoEclipseStoreImplIT {
         // Then
         List<CurrentPower> currentPowerList = store.getStartingFrom(1752390721 + 1);
         Assertions.assertEquals(4, currentPowerList.size());
-        Assertions.assertEquals(currentPower2, currentPowerList.get(0));
+        Assertions.assertEquals(currentPower2, currentPowerList.getFirst());
         Assertions.assertEquals(currentPower3, currentPowerList.get(1));
         Assertions.assertEquals(currentPower4, currentPowerList.get(2));
         Assertions.assertEquals(currentPower5, currentPowerList.get(3));

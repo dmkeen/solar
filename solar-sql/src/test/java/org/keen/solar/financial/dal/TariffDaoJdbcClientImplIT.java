@@ -226,7 +226,7 @@ class TariffDaoJdbcClientImplIT {
         // Then: The tariff is inserted into the database
         List<Tariff> tariffs = jdbcClient.sql("SELECT * FROM tariff WHERE feed_in = false " +
                         "AND day_of_week = 'SUNDAY' AND start_effective_date_epoch = 1731196800")
-                .query((rs, rowNum) -> new Tariff(
+                .query((rs, _) -> new Tariff(
                         rs.getBoolean("feed_in"),
                         rs.getLong("start_effective_date_epoch"),
                         rs.getObject("end_effective_date_epoch", Long.class),

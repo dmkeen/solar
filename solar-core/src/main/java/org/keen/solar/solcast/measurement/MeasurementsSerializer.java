@@ -21,7 +21,7 @@ public class MeasurementsSerializer extends StdSerializer<Measurements> {
     public void serialize(Measurements value, JsonGenerator gen, SerializationContext provider) {
         gen.writeStartObject();
         if (value.getMeasurements().size() == 1) {
-            provider.defaultSerializeProperty("measurement", value.getMeasurements().get(0), gen);
+            provider.defaultSerializeProperty("measurement", value.getMeasurements().getFirst(), gen);
         } else if (value.getMeasurements().size() > 1) {
             provider.defaultSerializeProperty("measurements", value.getMeasurements(), gen);
         }

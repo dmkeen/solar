@@ -39,7 +39,7 @@ public class ForecastsDeserializerTest {
         Assert.noNullElements(forecastList, "Expected no null forecasts");
         Assert.state(forecastList.size() == 336, "Expected 336 forecasts but found " + forecastList.size());
 
-        GenerationForecast forecast = forecastList.get(0);
+        GenerationForecast forecast = forecastList.getFirst();
         String periodEndString = "2020-03-14T01:30:00.0000000Z";
         Long periodEndEpoch = OffsetDateTime.parse(periodEndString).toEpochSecond();
         int duration = 30*60;

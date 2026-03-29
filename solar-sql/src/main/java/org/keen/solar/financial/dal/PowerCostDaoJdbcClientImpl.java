@@ -29,7 +29,7 @@ public class PowerCostDaoJdbcClientImpl implements PowerCostDao {
         return jdbcClient.sql("SELECT * from power_cost WHERE period_end_epoch >= :fromEpochTime AND period_end_epoch < :toEpochTime")
                 .param("fromEpochTime", fromEpochTime)
                 .param("toEpochTime", toEpochTime)
-                .query((rs, rowNum) -> new PowerCost(rs.getBigDecimal("cost"),
+                .query((rs, _) -> new PowerCost(rs.getBigDecimal("cost"),
                         rs.getLong("period_end_epoch"), rs.getInt("period_length_seconds")))
                 .list();
     }

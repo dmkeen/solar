@@ -30,7 +30,7 @@ public class MeasurementUploaderTest {
         Assert.state(measurements.size() == 1, "Expected only one Measurement");
         double expectedAverageGeneration = currentPowerList.stream().mapToDouble(CurrentPower::generation).average().getAsDouble() / 1000;
 
-        Measurement measurement = measurements.get(0);
+        Measurement measurement = measurements.getFirst();
         Assert.state(Math.abs(measurement.getTotal_power() - expectedAverageGeneration) < 0.01D,
                 "Expected generation to be within 0.01 of " + expectedAverageGeneration + " but was " + measurement.getTotal_power());
         Assert.state(measurement.getPeriod().equals(Duration.ofMinutes(5)),

@@ -46,7 +46,7 @@ public class ForecastDaoJdbcClientImpl implements ForecastDao {
                 """)
                 .param("fromEpochSeconds", fromEpochSeconds)
                 .param("toEpochSeconds", toEpochSeconds)
-                .query((rs, rowNum) -> new GenerationForecast(
+                .query((rs, _) -> new GenerationForecast(
                         rs.getDouble("pv_estimate"),
                         rs.getDouble("pv_estimat10"),
                         rs.getDouble("pv_estimate90"),

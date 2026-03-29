@@ -44,7 +44,7 @@ public class ForecastDaoJdbcClientImplIT {
 
         // Then
         List<GenerationForecast> results = jdbcClient.sql("SELECT * FROM generation_forecast")
-                .query((rs, rowNum) -> new GenerationForecast(
+                .query((rs, _) -> new GenerationForecast(
                         rs.getDouble("pv_estimate"),
                         rs.getDouble("pv_estimate10"),
                         rs.getDouble("pv_estimate90"),

@@ -23,7 +23,7 @@ public class CurrentPowerDaoJdbcClientImpl implements CurrentPowerDao {
     public List<CurrentPower> getStartingFrom(long fromEpochSeconds) {
         return jdbcClient.sql("SELECT * FROM current_power WHERE epoch_timestamp >= :fromEpochSeconds")
                 .param("fromEpochSeconds", fromEpochSeconds)
-                .query((rs, rowNum) -> new CurrentPower(
+                .query((rs, _) -> new CurrentPower(
                         rs.getLong(EPOCH_TIMESTAMP_COLUMN),
                         rs.getDouble(GENERATION_COLUMN),
                         rs.getDouble(CONSUMPTION_COLUMN)
@@ -40,7 +40,7 @@ public class CurrentPowerDaoJdbcClientImpl implements CurrentPowerDao {
                         """)
                 .param("fromEpochSeconds", fromEpochSeconds)
                 .param("toEpochSeconds", toEpochSeconds)
-                .query((rs, rowNum) -> new CurrentPower(
+                .query((rs, _) -> new CurrentPower(
                         rs.getLong(EPOCH_TIMESTAMP_COLUMN),
                         rs.getDouble(GENERATION_COLUMN),
                         rs.getDouble(CONSUMPTION_COLUMN)

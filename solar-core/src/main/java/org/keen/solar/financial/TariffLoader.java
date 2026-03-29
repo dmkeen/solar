@@ -102,9 +102,9 @@ public class TariffLoader {
                         try {
                             Tariff tariff = parseTariff(line);
                             if (tariff.feedIn()) {
-                                feedInTariffs.computeIfAbsent(tariff.dayOfWeek(), k -> new ArrayList<>()).add(tariff);
+                                feedInTariffs.computeIfAbsent(tariff.dayOfWeek(), _ -> new ArrayList<>()).add(tariff);
                             } else {
-                                usageTariffs.computeIfAbsent(tariff.dayOfWeek(), k -> new ArrayList<>()).add(tariff);
+                                usageTariffs.computeIfAbsent(tariff.dayOfWeek(), _ -> new ArrayList<>()).add(tariff);
                             }
                         } catch (IllegalArgumentException e) {
                             logger.warn("Skipping invalid tariff record: {}. Reason: {}", line, e.getMessage());
@@ -178,7 +178,7 @@ public class TariffLoader {
         try {
             // Try parsing as a long (epoch seconds)
             return Long.parseLong(value);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
             // If parsing as long fails, try parsing as a date string
             LocalDateTime dateTime = LocalDateTime.parse(value, dateFormatter);
             return dateTime.atZone(timeZone).toEpochSecond();

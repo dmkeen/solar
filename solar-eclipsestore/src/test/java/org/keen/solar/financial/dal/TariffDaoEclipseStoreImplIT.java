@@ -92,7 +92,7 @@ class TariffDaoEclipseStoreImplIT {
     private void insertTariff(boolean feedIn, long startEpoch, Long endEpoch, DayOfWeek dayOfWeek,
                               String startTime, String endTime, BigDecimal pricePerKwh) {
         Tariff tariff = createTariff(feedIn, startEpoch, endEpoch, dayOfWeek, LocalTime.parse(startTime), LocalTime.parse(endTime), pricePerKwh);
-        List<Tariff> tariffs = root.computeIfAbsent(dayOfWeek, dayOfWeek1 -> new ArrayList<>());
+        List<Tariff> tariffs = root.computeIfAbsent(dayOfWeek, _ -> new ArrayList<>());
         tariffs.add(tariff);
     }
 
