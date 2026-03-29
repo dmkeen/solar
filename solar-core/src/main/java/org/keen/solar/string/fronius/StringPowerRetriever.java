@@ -3,7 +3,7 @@ package org.keen.solar.string.fronius;
 import org.keen.solar.string.domain.StringPower;
 import org.keen.solar.string.domain.StringPowers;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 

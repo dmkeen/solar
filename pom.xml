@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.13</version>
+		<version>4.0.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<groupId>org.keen.solar</groupId>
 	<artifactId>solar-parent</artifactId>
-	<version>5.0.2</version>
+	<version>5.1.0</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -27,14 +27,13 @@
 	<properties>
 		<java.version>21</java.version>
 
-		<spring-modulith-bom.version>1.4.6</spring-modulith-bom.version>
-		<micrometer-registry-prometheus.version>1.15.7</micrometer-registry-prometheus.version>
+		<spring-modulith-bom.version>2.0.5</spring-modulith-bom.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
 
 		<dependency>
@@ -44,7 +43,6 @@
 		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-prometheus</artifactId>
-			<version>${micrometer-registry-prometheus.version}</version>
 		</dependency>
 
 		<dependency>
@@ -63,12 +61,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.junit.vintage</groupId>
-					<artifactId>junit-vintage-engine</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>

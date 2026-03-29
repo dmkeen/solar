@@ -7,11 +7,27 @@
     <parent>
         <groupId>org.keen.solar</groupId>
         <artifactId>solar-parent</artifactId>
-        <version>5.0.2</version>
+        <version>5.1.0</version>
     </parent>
 
     <name>Solar Core</name>
     <artifactId>solar-core</artifactId>
     <description>Contains the core classes for the Solar app.</description>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-restclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-resttestclient</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-restclient-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 </project>

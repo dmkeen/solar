@@ -1,13 +1,10 @@
 package org.keen.solar.system.fronius;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -28,13 +25,11 @@ public class SystemInfoLogger {
 
     private final Logger logger;
     private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
     private final String url;
 
-    public SystemInfoLogger(RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper,
+    public SystemInfoLogger(RestTemplateBuilder restTemplateBuilder,
                             @Value("${app.inverter.host}") String inverterApiHost) {
         this.restTemplate = restTemplateBuilder.build();
-        this.objectMapper = objectMapper;
         this.logger = LoggerFactory.getLogger(SystemInfoLogger.class);
         this.url = "http://" + inverterApiHost + "/solar_api/v1/GetLoggerInfo.cgi";
     }
@@ -42,14 +37,17 @@ public class SystemInfoLogger {
     @Async
     @EventListener(classes = ApplicationReadyEvent.class)
     @Scheduled(cron = "@daily")
-    public void logInfo() throws JsonProcessingException {
+    public void logInfo() {
         OffsetDateTime currentApplicationTime = OffsetDateTime.now();
-        String response = restTemplate.getForObject(url, String.class);
-        JsonNode jsonNode = objectMapper.readTree(response);
-        String timezone = jsonNode.at("/Body/LoggerInfo/TimezoneName").textValue();
-        int utcOffset = jsonNode.at("/Body/LoggerInfo/UTCOffset").intValue();
-        String dataManagerSoftwareVersion = jsonNode.at("/Body/LoggerInfo/SWVersion").textValue();
-        OffsetDateTime inverterTime = OffsetDateTime.parse(jsonNode.at("/Head/Timestamp").textValue());
+        Info response = restTemplate.getForObject(url, Info.class);
+        if (response == null) {
+            logger.info("No info found");
+            return;
+        }
+        String timezone = response.Body.LoggerInfo.TimezoneName;
+        int utcOffset = response.Body.LoggerInfo.UTCOffset;
+        String dataManagerSoftwareVersion = response.Body.LoggerInfo.SWVersion;
+        OffsetDateTime inverterTime = OffsetDateTime.parse(response.Head.Timestamp);
         long timeDifferenceSeconds = Duration.between(currentApplicationTime, inverterTime).getSeconds();
 
         logger.info("""
@@ -62,4 +60,9 @@ public class SystemInfoLogger {
                 timeDifferenceSeconds > 0 ? "+" : "",
                 timeDifferenceSeconds);
     }
+
+    record Info(Body Body, Head Head) {}
+    record Body(LoggerInfo LoggerInfo) {}
+    record LoggerInfo(String SWVersion, String TimezoneName, int UTCOffset) {}
+    record Head(String Timestamp) {}
 }

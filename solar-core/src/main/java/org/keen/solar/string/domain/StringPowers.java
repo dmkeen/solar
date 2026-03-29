@@ -1,6 +1,6 @@
 package org.keen.solar.string.domain;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 import org.keen.solar.string.fronius.StringPowersDeserializer;
 
 import java.util.List;

@@ -2,7 +2,6 @@ package org.keen.solar.solcast.measurement;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.keen.solar.config.MessagingConfiguration;
 import org.keen.solar.config.ObjectMapperConfiguration;
 import org.keen.solar.solcast.measurement.dal.MeasurementDao;
@@ -13,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.web.client.MockServerRestTemplateCustomizer;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.restclient.RestTemplateBuilder;
+import org.springframework.boot.restclient.test.MockServerRestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -23,7 +22,6 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.util.Assert;
 
@@ -34,7 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.keen.solar.solcast.measurement.MeasurementSerializer.PERIOD_END_FORMAT;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -49,7 +48,6 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @JsonTest
 @ContextConfiguration(classes = {ObjectMapperConfiguration.class, MessagingConfiguration.class,
         MeasurementUploaderMockIT.Config.class, MeasurementUploader.class})
-@ExtendWith(SpringExtension.class)
 @TestPropertySource(locations = "/application.properties")
 public class MeasurementUploaderMockIT {
 

@@ -2,14 +2,12 @@ package org.keen.solar.string.fronius;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.keen.solar.config.TestConfiguration;
 import org.keen.solar.string.domain.StringPower;
 import org.keen.solar.string.domain.StringPowers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
@@ -19,8 +17,7 @@ import java.util.List;
 /**
  * Calls the actual Fronius inverter API
  */
-@ContextConfiguration(classes = {TestConfiguration.class, StringPowerRetriever.class})
-@ExtendWith(SpringExtension.class)
+@SpringJUnitConfig(classes = {TestConfiguration.class, StringPowerRetriever.class})
 @TestPropertySource(locations = "/application.properties")
 public class StringPowerRetrieverIT {
 

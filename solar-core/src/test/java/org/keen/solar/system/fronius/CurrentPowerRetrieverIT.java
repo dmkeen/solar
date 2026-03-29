@@ -1,20 +1,17 @@
 package org.keen.solar.system.fronius;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.keen.solar.config.TestConfiguration;
 import org.keen.solar.system.domain.CurrentPower;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.util.Assert;
 
 /**
  * Calls the actual Fronius inverter API
  */
-@ContextConfiguration(classes = {TestConfiguration.class, CurrentPowerRetriever.class})
-@ExtendWith(SpringExtension.class)
+@SpringJUnitConfig(classes = {TestConfiguration.class, CurrentPowerRetriever.class})
 @TestPropertySource(locations = "/application.properties")
 public class CurrentPowerRetrieverIT {
 

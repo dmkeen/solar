@@ -1,14 +1,13 @@
 package org.keen.solar.string.fronius;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.deser.std.StdDeserializer;
 import org.keen.solar.string.domain.StringPower;
 import org.keen.solar.string.domain.StringPowers;
 import org.keen.solar.util.MathsUtil;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,8 +25,8 @@ public class StringPowersDeserializer extends StdDeserializer<StringPowers> {
     }
 
     @Override
-    public StringPowers deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        JsonNode jsonNode = p.getCodec().readTree(p);
+    public StringPowers deserialize(JsonParser p, DeserializationContext ctxt) {
+        JsonNode jsonNode = p.objectReadContext().readTree(p);
 
         // Note that while the StartDate returned in the response is the same as the parameter in the request,
         // the EndDate is greater by one day (and sometimes less one second).
@@ -35,15 +34,15 @@ public class StringPowersDeserializer extends StdDeserializer<StringPowers> {
         // because the API will return data up to the end of that day.
         // It is incorrect if a date and time (other than midnight) is passed in, though.
         // The data returned corresponds to the requested range, however.
-        String startDateString = jsonNode.get("Head").get("RequestArguments").get("StartDate").textValue();
+        String startDateString = jsonNode.get("Head").get("RequestArguments").get("StartDate").asString();
         OffsetDateTime startDateTime = OffsetDateTime.parse(startDateString);
 
         jsonNode = jsonNode.get("Body").get("Data").get("inverter/1").get("Data");
 
-        Iterator<Map.Entry<String, JsonNode>> currentString1 = jsonNode.get("Current_DC_String_1").get("Values").fields();
-        Iterator<Map.Entry<String, JsonNode>> currentString2 = jsonNode.get("Current_DC_String_2").get("Values").fields();
-        Iterator<Map.Entry<String, JsonNode>> voltageString1 = jsonNode.get("Voltage_DC_String_1").get("Values").fields();
-        Iterator<Map.Entry<String, JsonNode>> voltageString2 = jsonNode.get("Voltage_DC_String_2").get("Values").fields();
+        Iterator<Map.Entry<String, JsonNode>> currentString1 = jsonNode.get("Current_DC_String_1").get("Values").properties().iterator();
+        Iterator<Map.Entry<String, JsonNode>> currentString2 = jsonNode.get("Current_DC_String_2").get("Values").properties().iterator();
+        Iterator<Map.Entry<String, JsonNode>> voltageString1 = jsonNode.get("Voltage_DC_String_1").get("Values").properties().iterator();
+        Iterator<Map.Entry<String, JsonNode>> voltageString2 = jsonNode.get("Voltage_DC_String_2").get("Values").properties().iterator();
 
         List<StringPower> stringPowers = new ArrayList<>();
         while (currentString1.hasNext()) {

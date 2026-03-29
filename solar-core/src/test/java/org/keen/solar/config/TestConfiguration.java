@@ -5,15 +5,15 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.boot.web.client.RestTemplateCustomizer;
+import org.springframework.boot.restclient.RestTemplateBuilder;
+import org.springframework.boot.restclient.RestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +45,7 @@ public class TestConfiguration {
             }
             List<HttpMessageConverter<?>> messageConverters = restTemplate.getMessageConverters();
             messageConverters = messageConverters.stream()
-                    .filter(messageConverter -> !(messageConverter instanceof MappingJackson2HttpMessageConverter))
+                    .filter(messageConverter -> !(messageConverter instanceof JacksonJsonHttpMessageConverter))
                     .collect(Collectors.toCollection(ArrayList::new));
             messageConverters.add(converter);
             restTemplate.setMessageConverters(messageConverters);

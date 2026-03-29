@@ -1,11 +1,9 @@
 package org.keen.solar.solcast.measurement;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.ser.std.StdSerializer;
 import org.keen.solar.solcast.measurement.domain.Measurements;
-
-import java.io.IOException;
+import tools.jackson.databind.SerializationContext;
 
 /**
  * Serializes Measurements according to the requirements of the
@@ -20,12 +18,12 @@ public class MeasurementsSerializer extends StdSerializer<Measurements> {
     }
 
     @Override
-    public void serialize(Measurements value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(Measurements value, JsonGenerator gen, SerializationContext provider) {
         gen.writeStartObject();
         if (value.getMeasurements().size() == 1) {
-            provider.defaultSerializeField("measurement", value.getMeasurements().get(0), gen);
+            provider.defaultSerializeProperty("measurement", value.getMeasurements().get(0), gen);
         } else if (value.getMeasurements().size() > 1) {
-            provider.defaultSerializeField("measurements", value.getMeasurements(), gen);
+            provider.defaultSerializeProperty("measurements", value.getMeasurements(), gen);
         }
         gen.writeEndObject();
     }

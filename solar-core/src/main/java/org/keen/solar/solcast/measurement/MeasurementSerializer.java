@@ -1,11 +1,10 @@
 package org.keen.solar.solcast.measurement;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.ser.std.StdSerializer;
 import org.keen.solar.solcast.measurement.domain.Measurement;
+import tools.jackson.databind.SerializationContext;
 
-import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -21,11 +20,11 @@ public class MeasurementSerializer extends StdSerializer<Measurement> {
     }
 
     @Override
-    public void serialize(Measurement value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(Measurement value, JsonGenerator gen, SerializationContext provider) {
         gen.writeStartObject();
-        gen.writeStringField("period_end", value.getPeriod_end().format(DateTimeFormatter.ofPattern(PERIOD_END_FORMAT)));
-        gen.writeStringField("period", value.getPeriod().toString());
-        gen.writeNumberField("total_power", value.getTotal_power());
+        gen.writeStringProperty("period_end", value.getPeriod_end().format(DateTimeFormatter.ofPattern(PERIOD_END_FORMAT)));
+        gen.writeStringProperty("period", value.getPeriod().toString());
+        gen.writeNumberProperty("total_power", value.getTotal_power());
         gen.writeEndObject();
     }
 }

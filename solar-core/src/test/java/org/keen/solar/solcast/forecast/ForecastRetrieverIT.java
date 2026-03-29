@@ -2,21 +2,18 @@ package org.keen.solar.solcast.forecast;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.keen.solar.config.TestConfiguration;
 import org.keen.solar.solcast.forecast.domain.GenerationForecast;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.List;
 
 /**
  * Calls the actual Solcast forecast API. Note that there is a limited number of calls allowed per day.
  */
-@ContextConfiguration(classes = {TestConfiguration.class, ForecastRetriever.class})
-@ExtendWith(SpringExtension.class)
+@SpringJUnitConfig(classes = {TestConfiguration.class, ForecastRetriever.class})
 @TestPropertySource(locations = "/application.properties")
 public class ForecastRetrieverIT {
 

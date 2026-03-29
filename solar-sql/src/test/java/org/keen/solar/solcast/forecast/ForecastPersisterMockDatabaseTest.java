@@ -6,7 +6,7 @@ import org.keen.solar.config.DalConfiguration;
 import org.keen.solar.solcast.forecast.dal.ForecastDaoJdbcClientImpl;
 import org.keen.solar.solcast.forecast.domain.GenerationForecast;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
@@ -90,11 +90,11 @@ public class ForecastPersisterMockDatabaseTest {
         GenerationForecast forecast = getGenerationForecast(periodEndEpoch);
         Assert.notNull(forecast, "Expected to retrieve updated forecast");
         int duration = 30*60;
-        Assertions.assertEquals(duration, forecast.period_length_seconds(), String.format("Expected duration of %s but was %s", duration, forecast.period_length_seconds()));
-        Assertions.assertEquals(periodEndEpoch, forecast.period_end_epoch(), String.format("Expected period end of %s but was %s", periodEndEpoch, forecast.period_end_epoch()));
-        Assertions.assertEquals(1.9614, forecast.pv_estimate(), 0.0001, String.format("Expected pv estimate of %s but was %s", 1.9614, forecast.pv_estimate()));
-        Assertions.assertEquals(1.3395, forecast.pv_estimate10(), 0.0001, String.format("Expected pv estimate 10 of %s but was %s", 1.3395, forecast.pv_estimate10()));
-        Assertions.assertEquals(2.6258, forecast.pv_estimate90(), 0.0001, String.format("Expected pv estimate 90 of %s but was %s", 2.6258, forecast.pv_estimate90()));
+        Assertions.assertEquals(duration, forecast.period_length_seconds(), "Expected duration of %s but was %s".formatted(duration, forecast.period_length_seconds()));
+        Assertions.assertEquals(periodEndEpoch, forecast.period_end_epoch(), "Expected period end of %s but was %s".formatted(periodEndEpoch, forecast.period_end_epoch()));
+        Assertions.assertEquals(1.9614, forecast.pv_estimate(), 0.0001, "Expected pv estimate of %s but was %s".formatted(1.9614, forecast.pv_estimate()));
+        Assertions.assertEquals(1.3395, forecast.pv_estimate10(), 0.0001, "Expected pv estimate 10 of %s but was %s".formatted(1.3395, forecast.pv_estimate10()));
+        Assertions.assertEquals(2.6258, forecast.pv_estimate90(), 0.0001, "Expected pv estimate 90 of %s but was %s".formatted(2.6258, forecast.pv_estimate90()));
     }
 
     @Test
@@ -128,15 +128,15 @@ public class ForecastPersisterMockDatabaseTest {
 
         // Then
         long count = getCount();
-        Assert.state(count == 336, String.format("Expected 336 forecast entries but found %d", count));
+        Assert.state(count == 336, "Expected 336 forecast entries but found %d".formatted(count));
         GenerationForecast updatedForecast = getGenerationForecast(periodEndEpoch);
         Assert.notNull(updatedForecast, "Expected to retrieve updated forecast");
         int duration = 30*60;
-        Assertions.assertEquals(duration, updatedForecast.period_length_seconds(), String.format("Expected duration of %s but was %s", duration, updatedForecast.period_length_seconds()));
-        Assertions.assertEquals(periodEndEpoch, updatedForecast.period_end_epoch(), String.format("Expected period end of %s but was %s", periodEndEpoch, updatedForecast.period_end_epoch()));
-        Assertions.assertEquals(1.9614, updatedForecast.pv_estimate(), 0.0001, String.format("Expected pv estimate of %s but was %s", 1.9614, updatedForecast.pv_estimate()));
-        Assertions.assertEquals(1.3395, updatedForecast.pv_estimate10(), 0.0001, String.format("Expected pv estimate 10 of %s but was %s", 1.3395, updatedForecast.pv_estimate10()));
-        Assertions.assertEquals(2.6258, updatedForecast.pv_estimate90(), 0.0001, String.format("Expected pv estimate 90 of %s but was %s", 2.6258, updatedForecast.pv_estimate90()));
+        Assertions.assertEquals(duration, updatedForecast.period_length_seconds(), "Expected duration of %s but was %s".formatted(duration, updatedForecast.period_length_seconds()));
+        Assertions.assertEquals(periodEndEpoch, updatedForecast.period_end_epoch(), "Expected period end of %s but was %s".formatted(periodEndEpoch, updatedForecast.period_end_epoch()));
+        Assertions.assertEquals(1.9614, updatedForecast.pv_estimate(), 0.0001, "Expected pv estimate of %s but was %s".formatted(1.9614, updatedForecast.pv_estimate()));
+        Assertions.assertEquals(1.3395, updatedForecast.pv_estimate10(), 0.0001, "Expected pv estimate 10 of %s but was %s".formatted(1.3395, updatedForecast.pv_estimate10()));
+        Assertions.assertEquals(2.6258, updatedForecast.pv_estimate90(), 0.0001, "Expected pv estimate 90 of %s but was %s".formatted(2.6258, updatedForecast.pv_estimate90()));
     }
 
     private GenerationForecast getGenerationForecast(long periodEndEpoch) {

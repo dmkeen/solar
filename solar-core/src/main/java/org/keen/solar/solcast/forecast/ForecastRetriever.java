@@ -5,7 +5,7 @@ import org.keen.solar.solcast.forecast.domain.GenerationForecast;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -45,10 +45,12 @@ public class ForecastRetriever {
         HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
 
         String url = solcastApiBaseUrl + "/rooftop_sites/" + solcastSiteId + "/forecasts?hours=168";
-        logger.info("Retrieving solar forecast from " + url);
+        logger.info("Retrieving solar forecast from {}", url);
 
         ResponseEntity<Forecasts> forecastResponse = restTemplate.exchange(url,
                 HttpMethod.GET, httpEntity, Forecasts.class);
-        return forecastResponse.getBody().getForecasts();
+
+        Forecasts body = forecastResponse.getBody();
+        return body == null ? Collections.emptyList() : body.getForecasts();
     }
 }

@@ -1,6 +1,6 @@
 package org.keen.solar.solcast.measurement.domain;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.annotation.JsonSerialize;
 import org.keen.solar.system.domain.CurrentPower;
 import org.keen.solar.solcast.measurement.MeasurementSerializer;
 
