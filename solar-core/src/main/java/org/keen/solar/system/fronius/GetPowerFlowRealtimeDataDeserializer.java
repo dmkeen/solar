@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jackson.JacksonComponent;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 /**
@@ -41,8 +42,8 @@ public class GetPowerFlowRealtimeDataDeserializer extends StdDeserializer<Curren
         OffsetDateTime inverterTimestamp = OffsetDateTime.parse(timestampString);
 
         JsonNode siteNode = jsonNode.get("Body").get("Data").get("Site");
-        double powerGeneration = MathsUtil.roundMeasurement(siteNode.get("P_PV").decimalValue()).doubleValue();
-        double powerConsumption = MathsUtil.roundMeasurement(siteNode.get("P_Load").decimalValue()).doubleValue();
+        double powerGeneration = MathsUtil.roundMeasurement(siteNode.get("P_PV").decimalValue(BigDecimal.ZERO)).doubleValue();
+        double powerConsumption = MathsUtil.roundMeasurement(siteNode.get("P_Load").decimalValue(BigDecimal.ZERO)).doubleValue();
 
         OffsetDateTime timestamp;
         if (useInverterTimestamp) {
