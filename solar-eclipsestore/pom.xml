@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.keen.solar</groupId>
         <artifactId>solar-parent</artifactId>
-        <version>5.1.3</version>
+        <version>5.1.4</version>
     </parent>
 
     <name>Solar EclipseStore</name>

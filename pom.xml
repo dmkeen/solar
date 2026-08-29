@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.1.0</version>
+		<version>4.1.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<groupId>org.keen.solar</groupId>
 	<artifactId>solar-parent</artifactId>
-	<version>5.1.3</version>
+	<version>5.1.4</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -27,7 +27,7 @@
 	<properties>
 		<java.version>25</java.version>
 
-		<spring-modulith-bom.version>2.1.0</spring-modulith-bom.version>
+		<spring-modulith-bom.version>2.1.1</spring-modulith-bom.version>
 	</properties>
 
 	<dependencies>
